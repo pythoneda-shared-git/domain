@@ -46,6 +46,9 @@ class GitRepoTests(unittest.IsolatedAsyncioTestCase):
     """
 
     async def test_url_is_a_git_repo(self):
+        """
+        Checks if the method "url_is_a_git_repo()" behaves correctly.
+        """
         # given
         url = "https://github.com/pythoneda/base"
 
@@ -54,6 +57,34 @@ class GitRepoTests(unittest.IsolatedAsyncioTestCase):
 
         # then
         assert result
+
+    async def test_tag_exists_for_existing_tag(self):
+        """
+        Checks if the method "tag_exists()" behaves correctly when the tag exists.
+        """
+        # given
+        url = "https://github.com/pythoneda/base"
+        tag = "0.0.1a5"
+
+        # when
+        result = GitRepo.tag_exists(url, tag)
+
+        # then
+        assert result
+
+    async def test_tag_exists_for_non_existing_tag(self):
+        """
+        Checks if the method "tag_exists()" behaves correctly when the tag does not exist.
+        """
+        # given
+        url = "https://github.com/pythoneda/base"
+        tag = "0.0.1-5"
+
+        # when
+        result = GitRepo.tag_exists(url, tag)
+
+        # then
+        assert not result
 
 if __name__ == '__main__':
     unittest.main()
