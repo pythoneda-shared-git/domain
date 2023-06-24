@@ -39,7 +39,12 @@
             format = "pyproject";
 
             nativeBuildInputs = with python.pkgs; [ pip pkgs.jq poetry-core ];
-            propagatedBuildInputs = with python.pkgs; [ pythoneda-base ];
+            propagatedBuildInputs = with python.pkgs; [
+              GitPython
+              paramiko
+              pythoneda-base
+              semver
+            ];
 
             checkInputs = with python.pkgs; [ pytest ];
 
@@ -69,12 +74,6 @@
           };
       in rec {
         packages = rec {
-          pythoneda-shared-git-0_0_1a2-python38 =
-            pythoneda-shared-git-0_0_1a2-for {
-              pythoneda-base =
-                pythoneda-base.packages.${system}.pythoneda-base-latest-python38;
-              python = pkgs.python38;
-            };
           pythoneda-shared-git-0_0_1a2-python39 =
             pythoneda-shared-git-0_0_1a2-for {
               pythoneda-base =
@@ -87,8 +86,6 @@
                 pythoneda-base.packages.${system}.pythoneda-base-latest-python310;
               python = pkgs.python310;
             };
-          pythoneda-shared-git-latest-python38 =
-            pythoneda-shared-git-0_0_1a2-python38;
           pythoneda-shared-git-latest-python39 =
             pythoneda-shared-git-0_0_1a2-python39;
           pythoneda-shared-git-latest-python310 =
@@ -98,13 +95,6 @@
         };
         defaultPackage = packages.default;
         devShells = rec {
-          pythoneda-shared-git-0_0_1a2-python38 = shared.devShell-for {
-            package = packages.pythoneda-shared-git-0_0_1a2-python38;
-            pythoneda-base =
-              pythoneda-base.packages.${system}.pythoneda-base-latest-python39;
-            python = pkgs.python38;
-            inherit pkgs nixpkgsRelease;
-          };
           pythoneda-shared-git-0_0_1a2-python39 = shared.devShell-for {
             package = packages.pythoneda-shared-git-0_0_1a2-python39;
             pythoneda-base =
@@ -119,8 +109,6 @@
             python = pkgs.python310;
             inherit pkgs nixpkgsRelease;
           };
-          pythoneda-shared-git-latest-python38 =
-            pythoneda-shared-git-0_0_1a2-python38;
           pythoneda-shared-git-latest-python39 =
             pythoneda-shared-git-0_0_1a2-python39;
           pythoneda-shared-git-latest-python310 =

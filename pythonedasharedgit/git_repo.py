@@ -18,14 +18,24 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from pythonedasharedgit.git_tag import GitTag
+from pythonedasharedgit.git_progress_logging import GitProgressLogging
+from pythonedasharedgit.git_push import GitPush
+from pythonedasharedgit.ssh_private_key_git_policy import SshPrivateKeyGitPolicy
+
 from pythoneda.entity import Entity
 from pythoneda.value_object import attribute
 from pythonedasharedgit.error_cloning_git_repository import ErrorCloningGitRepository
 from pythonedasharedgit.git_checkout_failed import GitCheckoutFailed
 
+import atexit
+from git import Git, Repo, transport
 import logging
 import os
+import paramiko
 import re
+import semver
+import shutil
 import subprocess
 from urllib.parse import urlparse
 from typing import Dict
@@ -59,6 +69,7 @@ class GitRepo(Entity):
         super().__init__()
         self._url = url
         self._rev = rev
+        self._folder = None
 
     @property
     @attribute
@@ -79,6 +90,16 @@ class GitRepo(Entity):
         :rtype: str
         """
         return self._rev
+
+    @property
+    @attribute
+    def folder(self) -> str:
+        """
+        Retrieves the folder where the repo is cloned.
+        :return: Such value.
+        :rtype: str
+        """
+        return self._folder
 
     @classmethod
     def url_is_a_git_repo(cls, url: str) -> bool:
@@ -159,7 +180,33 @@ class GitRepo(Entity):
 
         return output.splitlines()[-1]
 
-    def clone(self, folder: str, subfolder: str) -> str:
+    def clone(self, sshUsername: str, privateKey: str, passphrase: str) -> Repo:
+        """
+        Clones this repo in given folder.
+        :param sshUsername: The SSH username.
+        :type sshUsername: str
+        :param privateKey: The private key for SSH authentication.
+        :type privateKey: str
+        :param passphrase: The passphrase of the private key.
+        :type passphrase: str
+        :return: A git.Repo instance.
+        :rtype: git.Repo
+        """
+        oldTransport = transport.Transport
+
+        transport.Transport = SshPrivateKeyGitPolicy(sshUsername, privateKey, passphrase).build_transport(args, kwargs)
+        ssh_cmd = f'ssh -i {privateKey} -l {sshUsername}'
+        with paramiko.SSHClient() as ssh:
+            self._folder = templife.TemporaryDirectory()
+            add_folder_to_cleanup(self._folder)
+            result = Repo.clone_from(self.url, self._folder,
+                    progress=GitProgressLogging(),
+                    env={'GIT_SSH_COMMAND': ssh_cmd})
+        transport.Transport = oldTransport
+
+        return result
+
+    def raw_clone(self, folder: str, subfolder:str=None) -> Repo:
         """
         Clones this repo in given folder.
         :param folder: The base folder of the cloned repository.
@@ -169,7 +216,10 @@ class GitRepo(Entity):
         :return: The final folder of the cloned repository.
         :rtype: str
         """
-        result = os.path.join(folder, subfolder)
+        result = folder
+
+        if subfolder:
+            result = os.path.join(folder, subfolder)
 
         try:
             subprocess.run(
@@ -198,7 +248,7 @@ class GitRepo(Entity):
             logging.getLogger(__name__).error(err.stderr)
             raise GitCheckoutFailed(self.url, self.rev, folder)
 
-        return result
+        return Repo(result)
 
     @classmethod
     def extract_url_and_subfolder(cls, url: str) -> tuple:
@@ -232,3 +282,81 @@ class GitRepo(Entity):
         """
         parsed_url = urlparse(self.url)
         return parsed_url.netloc == "github.com"
+
+    def tag_version(self, version: Version):
+        """
+        Tags the repository with a new version, and pushes the tag.
+        :param version: The new version.
+        :type version: Version
+        """
+        GitTag.create_tag(self.folder, version)
+        GitPush.push_tag(self.folder)
+
+    def increase_major(self) -> Version:
+        """
+        Creates a new tag increasing the major in current version.
+        :return: The new version.
+        :rtype: Version from pythonedasharedgit.version
+        """
+        version = Version(self.branch).increase_major()
+        tag_version(version)
+        return version
+
+    def increase_minor(self) -> Version:
+        """
+        Creates a new tag increasing the minor in current version.
+        :return: The new version.
+        :rtype: Version from pythonedasharedgit.version
+        """
+        version = Version(self.branch).increase_minor()
+        tag_version(version)
+        return version
+
+    def increase_patch(self) -> Version:
+        """
+        Creates a new tag increasing the patch in current version.
+        :return: The new version.
+        :rtype: Version from pythonedasharedgit.version
+        """
+        version = Version(self.branch).increase_patch()
+        tag_version(version)
+        return version
+
+    def increase_prerelease(self) -> Version:
+        """
+        Creates a new tag increasing the prerelease in current version.
+        :return: The new version.
+        :rtype: Version from pythonedasharedgit.version
+        """
+        version = Version(self.branch).increase_prerelease()
+        tag_version(version)
+        return version
+
+    def increase_build(self) -> Version:
+        """
+        Creates a new tag increasing the build in current version.
+        :return: The new version.
+        :rtype: Version from pythonedasharedgit.version
+        """
+        version = Version(self.branch).increase_build()
+        tag_version(version)
+        return version
+
+_folders_to_cleanup = []
+
+def add_folder_to_cleanup(folder: str):
+    """
+    Adds a new folder to cleanup at exit.
+    :param folder: The new folder.
+    :type folder: str
+    """
+    _folders_to_cleanup.append(folder)
+
+def cleanup():
+    """
+    Cleans up cloned repositories.
+    """
+    for folder in _folders_to_cleanup:
+        shutil.rmtree(folder)
+
+atexit.register(cleanup)

@@ -27,12 +27,10 @@ if base_folder not in sys.path:
 
 from pythonedasharedgit.git_repo import GitRepo
 
-import asyncio
-import pytest
 import re
 import unittest
 
-class GitRepoTests(unittest.IsolatedAsyncioTestCase):
+class GitRepoTests(unittest.TestCase):
     """
     Defines tests for pythonedasharedgit/git_repo.py.
 
@@ -45,7 +43,7 @@ class GitRepoTests(unittest.IsolatedAsyncioTestCase):
         - GitRepo: The subject under test.
     """
 
-    async def test_url_is_a_git_repo(self):
+    def test_url_is_a_git_repo(self):
         """
         Checks if the method "url_is_a_git_repo()" behaves correctly.
         """
@@ -58,7 +56,7 @@ class GitRepoTests(unittest.IsolatedAsyncioTestCase):
         # then
         assert result
 
-    async def test_tag_exists_for_existing_tag(self):
+    def test_tag_exists_for_existing_tag(self):
         """
         Checks if the method "tag_exists()" behaves correctly when the tag exists.
         """
@@ -72,7 +70,7 @@ class GitRepoTests(unittest.IsolatedAsyncioTestCase):
         # then
         assert result
 
-    async def test_tag_exists_for_non_existing_tag(self):
+    def test_tag_exists_for_non_existing_tag(self):
         """
         Checks if the method "tag_exists()" behaves correctly when the tag does not exist.
         """
