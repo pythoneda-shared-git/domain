@@ -8,6 +8,7 @@ homepage = "https://github.com/pythoneda-shared/git"
 packages = [{include = "pythonedasharedgit"}]
 
 [tool.poetry.dependencies]
+dulwich = "^0.20.50"
 GitPython = "^3.1.27"
 python = "^3.8"
 pythoneda-base = "^0.0.1a15"

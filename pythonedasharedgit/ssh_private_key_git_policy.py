@@ -18,14 +18,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda.value_object import ValueObject
+from pythoneda.value_object import attribute, sensitive, ValueObject
 
-from git import transport
 import os
 import paramiko
 from typing import Dict
 
-class SshPrivateKeyGitPolicy(transport.Transport, ValueObject):
+class SshPrivateKeyGitPolicy(ValueObject):
     """
     A policy to use a private key for git operations over ssh.
 

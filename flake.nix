@@ -40,6 +40,7 @@
 
             nativeBuildInputs = with python.pkgs; [ pip pkgs.jq poetry-core ];
             propagatedBuildInputs = with python.pkgs; [
+              dulwich
               GitPython
               paramiko
               pythoneda-base

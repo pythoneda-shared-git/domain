@@ -18,6 +18,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from pythoneda.value_object import attribute
 from pythonedasharedgit.git_tag_failed import GitTagFailed
 
 import logging
@@ -49,7 +50,7 @@ class GitTag():
         super().__init__()
         self._folder = folder
 
-    @propery
+    @property
     @attribute
     def folder(self) -> str:
         """
@@ -71,7 +72,7 @@ class GitTag():
         """
         try:
             subprocess.run(
-                ["git", "tag", tag],
+                ["git", "tag", "-a", tag, "-m"],
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,

@@ -22,6 +22,7 @@ from pythonedasharedgit.git_tag import GitTag
 from pythonedasharedgit.git_progress_logging import GitProgressLogging
 from pythonedasharedgit.git_push import GitPush
 from pythonedasharedgit.ssh_private_key_git_policy import SshPrivateKeyGitPolicy
+from pythonedasharedgit.version import Version
 
 from pythoneda.entity import Entity
 from pythoneda.value_object import attribute
@@ -29,10 +30,9 @@ from pythonedasharedgit.error_cloning_git_repository import ErrorCloningGitRepos
 from pythonedasharedgit.git_checkout_failed import GitCheckoutFailed
 
 import atexit
-from git import Git, Repo, transport
+from git import Git, Repo
 import logging
 import os
-import paramiko
 import re
 import semver
 import shutil
@@ -180,7 +180,7 @@ class GitRepo(Entity):
 
         return output.splitlines()[-1]
 
-    def clone(self, sshUsername: str, privateKey: str, passphrase: str) -> Repo:
+    def clone(self, sshUsername: str, privateKeyFile: str, privateKeyPassphrase: str) -> Repo:
         """
         Clones this repo in given folder.
         :param sshUsername: The SSH username.
@@ -192,19 +192,6 @@ class GitRepo(Entity):
         :return: A git.Repo instance.
         :rtype: git.Repo
         """
-        oldTransport = transport.Transport
-
-        transport.Transport = SshPrivateKeyGitPolicy(sshUsername, privateKey, passphrase).build_transport(args, kwargs)
-        ssh_cmd = f'ssh -i {privateKey} -l {sshUsername}'
-        with paramiko.SSHClient() as ssh:
-            self._folder = templife.TemporaryDirectory()
-            add_folder_to_cleanup(self._folder)
-            result = Repo.clone_from(self.url, self._folder,
-                    progress=GitProgressLogging(),
-                    env={'GIT_SSH_COMMAND': ssh_cmd})
-        transport.Transport = oldTransport
-
-        return result
 
     def raw_clone(self, folder: str, subfolder:str=None) -> Repo:
         """
