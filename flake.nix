@@ -68,52 +68,52 @@
               inherit description license homepage maintainers;
             };
           };
-        pythoneda-shared-git-0_0_1a3-for = { pythoneda-base, python }:
+        pythoneda-shared-git-0_0_1a4-for = { pythoneda-base, python }:
           pythoneda-shared-git-for {
-            version = "0.0.1a3";
+            version = "0.0.1a4";
             inherit pythoneda-base python;
           };
       in rec {
         packages = rec {
-          pythoneda-shared-git-0_0_1a3-python39 =
-            pythoneda-shared-git-0_0_1a3-for {
+          pythoneda-shared-git-0_0_1a4-python39 =
+            pythoneda-shared-git-0_0_1a4-for {
               pythoneda-base =
                 pythoneda-base.packages.${system}.pythoneda-base-latest-python39;
               python = pkgs.python39;
             };
-          pythoneda-shared-git-0_0_1a3-python310 =
-            pythoneda-shared-git-0_0_1a3-for {
+          pythoneda-shared-git-0_0_1a4-python310 =
+            pythoneda-shared-git-0_0_1a4-for {
               pythoneda-base =
                 pythoneda-base.packages.${system}.pythoneda-base-latest-python310;
               python = pkgs.python310;
             };
           pythoneda-shared-git-latest-python39 =
-            pythoneda-shared-git-0_0_1a3-python39;
+            pythoneda-shared-git-0_0_1a4-python39;
           pythoneda-shared-git-latest-python310 =
-            pythoneda-shared-git-0_0_1a3-python310;
+            pythoneda-shared-git-0_0_1a4-python310;
           pythoneda-shared-git-latest = pythoneda-shared-git-latest-python310;
           default = pythoneda-shared-git-latest;
         };
         defaultPackage = packages.default;
         devShells = rec {
-          pythoneda-shared-git-0_0_1a3-python39 = shared.devShell-for {
-            package = packages.pythoneda-shared-git-0_0_1a3-python39;
+          pythoneda-shared-git-0_0_1a4-python39 = shared.devShell-for {
+            package = packages.pythoneda-shared-git-0_0_1a4-python39;
             pythoneda-base =
               pythoneda-base.packages.${system}.pythoneda-base-latest-python39;
             python = pkgs.python39;
             inherit pkgs nixpkgsRelease;
           };
-          pythoneda-shared-git-0_0_1a3-python310 = shared.devShell-for {
-            package = packages.pythoneda-shared-git-0_0_1a3-python310;
+          pythoneda-shared-git-0_0_1a4-python310 = shared.devShell-for {
+            package = packages.pythoneda-shared-git-0_0_1a4-python310;
             pythoneda-base =
               pythoneda-base.packages.${system}.pythoneda-base-latest-python310;
             python = pkgs.python310;
             inherit pkgs nixpkgsRelease;
           };
           pythoneda-shared-git-latest-python39 =
-            pythoneda-shared-git-0_0_1a3-python39;
+            pythoneda-shared-git-0_0_1a4-python39;
           pythoneda-shared-git-latest-python310 =
-            pythoneda-shared-git-0_0_1a3-python310;
+            pythoneda-shared-git-0_0_1a4-python310;
           pythoneda-shared-git-latest = pythoneda-shared-git-latest-python310;
           default = pythoneda-shared-git-latest;
 
