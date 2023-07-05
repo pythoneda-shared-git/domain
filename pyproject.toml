@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pythoneda-shared-git"
-version = "0.0.1a4"
+version = "0.0.1a3"
 description = "Shared kernel for git concepts"
 authors = ["rydnr <github@acm-sl.org>"]
 readme = "README.md"
@@ -8,12 +8,12 @@ homepage = "https://github.com/pythoneda-shared/git"
 packages = [{include = "pythonedasharedgit"}]
 
 [tool.poetry.dependencies]
-dulwich = "^0.20.50"
+dulwich = "^0.21.5"
 GitPython = "^3.1.27"
+paramiko = "^2.11.0"
 python = "^3.8"
 pythoneda-base = "^0.0.1a15"
 semver = "^3.0.0"
-paramiko = "^2.11.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.0"
