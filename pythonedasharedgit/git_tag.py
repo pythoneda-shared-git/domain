@@ -70,18 +70,19 @@ class GitTag():
         :return: True if the operation succeeds.
         :rtype: bool
         """
+        print(f'Creating tag {tag} in {self._folder}')
         try:
             subprocess.run(
-                ["git", "tag", "-a", tag, "-m"],
+                ["git", "tag", tag],
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                text=True,
-                cwd=self.folder,
+                text=False,
+                cwd=self._folder,
             )
         except subprocess.CalledProcessError as err:
             logging.getLogger(__name__).error(err.stdout)
             logging.getLogger(__name__).error(err.stderr)
             raise GitTagFailed(tag, self.folder)
-
+        print('done')
         return True

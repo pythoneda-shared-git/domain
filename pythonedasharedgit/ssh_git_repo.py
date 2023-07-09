@@ -18,12 +18,21 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from dulwich import porcelain
+import atexit
+from dulwich.repo import Repo
+from dulwich.client import get_transport_and_path
+from dulwich.protocol import Protocol, ZERO_SHA
 from git import Repo
+import os
+from paramiko import RSAKey, AutoAddPolicy
+from paramiko.client import SSHClient
+from paramiko.agent import AgentRequestHandler, AgentServerProxy
 from pythoneda.value_object import attribute, sensitive
 from pythonedaartifacteventgittagging.tag_credentials_provided import TagCredentialsProvided
 from pythonedasharedgit.git_repo import GitRepo
 from pythonedasharedgit.ssh_vendor import SshVendor
+import shutil
+import tempfile
 
 class SshGitRepo(GitRepo):
     """
@@ -55,8 +64,10 @@ class SshGitRepo(GitRepo):
         """
         super().__init__(url, rev)
         self._ssh_username = sshUsername
-        self._private_key_file = privateKeyFile
-        self._private_key_passphrase = privateKeyPassphrase
+#        self._private_key_file = privateKeyFile
+        self._private_key_file = "/home/chous/.ssh/id_rsa-unveilingpartner.pub"
+#        self._private_key_passphrase = privateKeyPassphrase
+        self._private_key_passphrase = ""
 
     @property
     @attribute
@@ -70,8 +81,7 @@ class SshGitRepo(GitRepo):
         return self._ssh_username
 
     @property
-    @attribute
-    @sensitive
+#    @attribute
     def private_key_file(self) -> str:
         """
         Retrieves the location of the private key.
@@ -82,7 +92,7 @@ class SshGitRepo(GitRepo):
 
     @property
     @attribute
-    @sensitive
+#    @sensitive
     def private_key_passphrase(self) -> str:
         """
         Retrieves the private key passphrase.
@@ -98,7 +108,35 @@ class SshGitRepo(GitRepo):
         :return: A git.Repo instance.
         :rtype: git.Repo
         """
-        vendor = SshVendor(self.ssh_username, self.private_key_file, self.private_key_passphrase)
-        self._folder = tempfile.TemporaryDirectory()
+#        vendor = SshVendor(self.ssh_username, self.private_key_file, self.private_key_passphrase)
+#        client, path = get_transport_and_path(self.url, ssh_vendor=vendor)
+        self._folder = tempfile.TemporaryDirectory().name
         add_folder_to_cleanup(self._folder)
-        return porcelain.clone(self.url, self._folder, ssh_vendor=vendor)
+
+        ssh_cmd = f'ssh -i {self.private_key_file} -o StrictHostKeyChecking=no'
+
+        os.environ['GIT_SSH_COMMAND'] = ssh_cmd
+        result = Repo.clone_from(self.url, self._folder)
+        self._repo = result
+        print(f'repo -> {result}')
+        return result
+
+
+_folders_to_cleanup = []
+
+def add_folder_to_cleanup(folder: str):
+    """
+    Adds a new folder to cleanup at exit.
+    :param folder: The new folder.
+    :type folder: str
+    """
+    _folders_to_cleanup.append(folder)
+
+def cleanup():
+    """
+    Cleans up cloned repositories.
+    """
+    for folder in _folders_to_cleanup:
+        shutil.rmtree(folder)
+
+atexit.register(cleanup)

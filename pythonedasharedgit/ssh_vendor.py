@@ -47,7 +47,7 @@ class SshVendor(object):
         """
         self._ssh_username = sshUsername
         self._private_key_file = privateKeyFile
-        self._private_key_passphrase = private_key_passphrase
+        self._private_key_passphrase = privateKeyPassphrase
         self._ssh_kwargs = {'username': sshUsername}
 
     @property
@@ -83,7 +83,7 @@ class SshVendor(object):
         """
         return self._private_key_passphrase
 
-    def run_command(self, hostPath: str, command: str, username=None:str, password=None:str):
+    def run_command(self, hostPath: str, command: str, username:str=None, password:str=None):
         """
         Runs a command using SSH.
         :param hostPath: The host path.
@@ -119,6 +119,5 @@ class SshVendor(object):
         :param hostPath: The host path.
         :type hostPath: str
         """
-        # We're ignoring any username that is passed in because it won't be
-        # used anyway.
-        return self.run_command(hostPath, command=None)
+        client, chan = self.run_command(hostPath, 'git-upload-pack /' + hostPath)
+        return Protocol(lambda: chan.recv(65536), chan.sendall)

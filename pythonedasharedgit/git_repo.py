@@ -18,30 +18,27 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythonedasharedgit.git_tag import GitTag
-from pythonedasharedgit.git_progress_logging import GitProgressLogging
-from pythonedasharedgit.git_push import GitPush
-from pythonedasharedgit.ssh_private_key_git_policy import SshPrivateKeyGitPolicy
-from pythonedasharedgit.version import Version
-
+import abc
+from git import Git, Repo
+import logging
+import os
 from pythoneda.entity import Entity
 from pythoneda.value_object import attribute
 from pythonedasharedgit.error_cloning_git_repository import ErrorCloningGitRepository
 from pythonedasharedgit.git_checkout_failed import GitCheckoutFailed
-
-import atexit
-from git import Git, Repo
-import logging
-import os
+from pythonedasharedgit.git_progress_logging import GitProgressLogging
+from pythonedasharedgit.git_push import GitPush
+from pythonedasharedgit.git_tag import GitTag
+from pythonedasharedgit.ssh_private_key_git_policy import SshPrivateKeyGitPolicy
+from pythonedasharedgit.version import Version
 import re
 import semver
-import shutil
 import subprocess
 from urllib.parse import urlparse
 from typing import Dict
 
 
-class GitRepo(Entity):
+class GitRepo(Entity, abc.ABC):
     """
     Represents a Git repository.
 
@@ -61,15 +58,12 @@ class GitRepo(Entity):
         :type url: str
         :param rev: The revision.
         :type rev: str
-        :param repoInfo: The repository metadata.
-        :type repoInfo: Dict
-        :param subfolder: Whether it's a monorepo and we're interested only in a subfolder.
-        :type subfolder: str
         """
         super().__init__()
         self._url = url
         self._rev = rev
         self._folder = None
+        self._repo = None
 
     @property
     @attribute
@@ -100,6 +94,33 @@ class GitRepo(Entity):
         :rtype: str
         """
         return self._folder
+
+    def latest_tag(self) -> str:
+        """
+        Retrieves the latest tag, if the repo has already been cloned.
+        :return: Such name.
+        :rtype: str
+        """
+        result = None
+        if self._repo is not None:
+            versions = []
+            for tag in self._repo.tags:
+                try:
+                    version_info = semver.VersionInfo.parse(tag.name)
+                    build = 0
+                    match = re.search(r"\+build\.(\d+)", tag.name)
+                    if match:
+                        build = int(match.group(1))
+
+                    versions.append((version_info, build, tag.name))
+                except ValueError:
+                    pass
+
+            if versions:
+                versions.sort(key=lambda v: (v[0], v[1]), reverse=True)
+                result = versions[0][2]
+
+        return result
 
     @classmethod
     def url_is_a_git_repo(cls, url: str) -> bool:
@@ -180,6 +201,7 @@ class GitRepo(Entity):
 
         return output.splitlines()[-1]
 
+    @abc.abstractmethod
     def clone(self, sshUsername: str, privateKeyFile: str, privateKeyPassphrase: str) -> Repo:
         """
         Clones this repo in given folder.
@@ -276,8 +298,9 @@ class GitRepo(Entity):
         :param version: The new version.
         :type version: Version
         """
-        GitTag.create_tag(self.folder, version)
-        GitPush.push_tag(self.folder)
+        print(f'folder -> {self._folder}, type -> {type(self._folder)}')
+        GitTag(self._folder).create_tag(version.value)
+        GitPush(self._folder).push_tags()
 
     def increase_major(self) -> Version:
         """
@@ -285,8 +308,8 @@ class GitRepo(Entity):
         :return: The new version.
         :rtype: Version from pythonedasharedgit.version
         """
-        version = Version(self.branch).increase_major()
-        tag_version(version)
+        version = Version(self.latest_tag()).increase_major()
+        self.tag_version(version)
         return version
 
     def increase_minor(self) -> Version:
@@ -295,8 +318,8 @@ class GitRepo(Entity):
         :return: The new version.
         :rtype: Version from pythonedasharedgit.version
         """
-        version = Version(self.branch).increase_minor()
-        tag_version(version)
+        version = Version(self.latest_tag()).increase_minor()
+        self.tag_version(version)
         return version
 
     def increase_patch(self) -> Version:
@@ -305,8 +328,8 @@ class GitRepo(Entity):
         :return: The new version.
         :rtype: Version from pythonedasharedgit.version
         """
-        version = Version(self.branch).increase_patch()
-        tag_version(version)
+        version = Version(self.latest_tag()).increase_patch()
+        self.tag_version(version)
         return version
 
     def increase_prerelease(self) -> Version:
@@ -315,8 +338,8 @@ class GitRepo(Entity):
         :return: The new version.
         :rtype: Version from pythonedasharedgit.version
         """
-        version = Version(self.branch).increase_prerelease()
-        tag_version(version)
+        version = Version(self.latest_tag()).increase_prerelease()
+        self.tag_version(version)
         return version
 
     def increase_build(self) -> Version:
@@ -325,25 +348,7 @@ class GitRepo(Entity):
         :return: The new version.
         :rtype: Version from pythonedasharedgit.version
         """
-        version = Version(self.branch).increase_build()
-        tag_version(version)
+        print(f'latest_tag -> {self.latest_tag()}')
+        version = Version(self.latest_tag()).increase_build()
+        self.tag_version(version)
         return version
-
-_folders_to_cleanup = []
-
-def add_folder_to_cleanup(folder: str):
-    """
-    Adds a new folder to cleanup at exit.
-    :param folder: The new folder.
-    :type folder: str
-    """
-    _folders_to_cleanup.append(folder)
-
-def cleanup():
-    """
-    Cleans up cloned repositories.
-    """
-    for folder in _folders_to_cleanup:
-        shutil.rmtree(folder)
-
-atexit.register(cleanup)

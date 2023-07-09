@@ -85,6 +85,7 @@ class GitPush:
         :return: True if the operation succeeds.
         :rtype: bool
         """
+        print(f'Pushing tags in {self._folder}')
         try:
             subprocess.run(
                 ["git", "push", "--tags"],
