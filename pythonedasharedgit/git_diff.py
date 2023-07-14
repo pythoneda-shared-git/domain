@@ -67,15 +67,12 @@ class GitDiff:
                 ["git", "-C", self.folder, "diff"],
                 check=True,
                 capture_output=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
                 text=True,
                 cwd=self.folder,
             )
             result = execution.stdout
         except subprocess.CalledProcessError as err:
-            logging.getLogger(__name__).error(err.stdout)
-            logging.getLogger(__name__).error(err.stderr)
+            logging.getLogger(__name__).error(err)
             raise GitDiffFailed(self.folder)
 
         return result

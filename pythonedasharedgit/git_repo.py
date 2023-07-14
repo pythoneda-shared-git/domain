@@ -35,7 +35,7 @@ import re
 import semver
 import subprocess
 from urllib.parse import urlparse
-from typing import Dict
+from typing import Dict, List
 
 
 class GitRepo(Entity, abc.ABC):
@@ -352,3 +352,30 @@ class GitRepo(Entity, abc.ABC):
         version = Version(self.latest_tag()).increase_build()
         self.tag_version(version)
         return version
+
+    @classmethod
+    def remote_urls(cls, clonedFolder: str) -> Dict:
+        """
+        Retrieves the remote urls of given repository.
+        :param clonedFolder: The repository folder.
+        :type clonedFolder: str
+        :return: For each remote repository, a list with its urls.
+        :rtype: Dict[List[str]]
+        """
+        repo = Repo(clonedFolder)
+        result = {}
+        for remote in repo.remotes:
+            result[remote.name] = list(remote.urls)
+        return result
+
+    @classmethod
+    def current_branch(cls, clonedFolder: str) -> str:
+        """
+        Retrieves the current branch of given repository.
+        :param clonedFolder: The repository folder.
+        :type clonedFolder: str
+        :return: The current branch.
+        :rtype: str
+        """
+        repo = Repo(clonedFolder)
+        return repo.active_branch.name
