@@ -28,7 +28,6 @@ from paramiko import RSAKey, AutoAddPolicy
 from paramiko.client import SSHClient
 from paramiko.agent import AgentRequestHandler, AgentServerProxy
 from pythoneda.value_object import attribute, sensitive
-from pythonedaartifacteventgittagging.tag_credentials_provided import TagCredentialsProvided
 from pythonedasharedgit.git_repo import GitRepo
 from pythonedasharedgit.ssh_vendor import SshVendor
 import shutil
