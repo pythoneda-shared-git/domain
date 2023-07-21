@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/git_tag.py
+pythoneda/shared/git/git_tag.py
 
 This file declares the GitTag class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,16 +18,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda.value_object import attribute
-from pythonedasharedgit.git_tag_failed import GitTagFailed
-
 import logging
 import os
+from pythoneda.shared.git.git_tag_failed import GitTagFailed
+from pythoneda.value_object import attribute
 import re
 import semver
 import subprocess
 from typing import Dict
-
 
 class GitTag():
     """

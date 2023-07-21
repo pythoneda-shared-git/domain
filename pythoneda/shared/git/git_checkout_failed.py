@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/error_cloning_git_repository.py
+pythoneda/shared/git/git_checkout_failed.py
 
-This file defines the ErrorCloningGitRepository exception class.
+This file defines the GitCheckoutFailed exception class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,25 +18,27 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-class ErrorCloningGitRepository(Exception):
+class GitCheckoutFailed(Exception):
     """
-    Running git clone [url] failed.
+    Running git checkout [rev] failed.
 
-    Class name: ErrorCloningGitRepository
+    Class name: GitCheckoutFailed
 
     Responsibilities:
-        - Represent the error running git clone.
+        - Represent the error when running git checkout.
 
     Collaborators:
         - None
     """
 
-    def __init__(self, url: str, folder: str):
+    def __init__(self, url: str, rev: str, folder: str):
         """
         Creates a new instance.
         :param url: The url of the repository.
         :type url: str
-        :param folder: The folder where the repository was being cloned.
+        :param rev: The revision.
+        :type rev: str
+        :param folder: The folder with the cloned repository.
         :type folder: str
         """
-        super().__init__('"git clone {url}" in folder {folder} failed')
+        super().__init__(f'"git checkout {rev}" in folder {folder} failed')

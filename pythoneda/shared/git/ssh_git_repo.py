@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/ssh_git_repo.py
+pythoneda/shared/git/ssh_git_repo.py
 
 This file declares the SshGitRepo class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@ import os
 from paramiko import RSAKey, AutoAddPolicy
 from paramiko.client import SSHClient
 from paramiko.agent import AgentRequestHandler, AgentServerProxy
+from pythoneda.shared.git.git_repo import GitRepo
+from pythoneda.shared.git.ssh_vendor import SshVendor
 from pythoneda.value_object import attribute, sensitive
-from pythonedasharedgit.git_repo import GitRepo
-from pythonedasharedgit.ssh_vendor import SshVendor
 import shutil
 import tempfile
 

@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/git_add_failed.py
+pythoneda/shared/git/git_add_failed.py
 
 This file defines the GitAddFailed exception class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

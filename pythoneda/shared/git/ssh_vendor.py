@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/ssh_git_repo.py
+pythoneda/shared/git/ssh_git_repo.py
 
 This file declares the SshGitRepo class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

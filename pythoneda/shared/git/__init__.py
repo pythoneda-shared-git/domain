@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/git_diff_failed.py
+pythoneda/shared/git/__init__.py
 
-This file defines the GitDiffFailed exception class.
+This file ensures pythoneda.shared.git is a package.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,23 +18,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-class GitDiffFailed(Exception):
-    """
-    Running git diff failed.
-
-    Class name: GitDiffFailed
-
-    Responsibilities:
-        - Represent the error when running git diff.
-
-    Collaborators:
-        - None
-    """
-
-    def __init__(self, folder: str):
-        """
-        Creates a new instance.
-        :param folder: The folder with the cloned repository.
-        :type folder: str
-        """
-        super().__init__(f'"git diff" in folder {folder} failed')

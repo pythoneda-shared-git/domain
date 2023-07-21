@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/git_tag_failed.py
+pythoneda/shared/git/error_cloning_git_repository.py
 
-This file defines the GitTagFailed exception class.
+This file defines the ErrorCloningGitRepository exception class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,27 +18,25 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-
-
-class GitTagFailed(Exception):
+class ErrorCloningGitRepository(Exception):
     """
-    Running git tag [tag] failed.
+    Running git clone [url] failed.
 
-    Class name: GitTagFailed
+    Class name: ErrorCloningGitRepository
 
     Responsibilities:
-        - Represent the error when running git tag.
+        - Represent the error running git clone.
 
     Collaborators:
         - None
     """
 
-    def __init__(self, tag: str, folder: str):
+    def __init__(self, url: str, folder: str):
         """
         Creates a new instance.
-        :param tag: The tag.
-        :type tag: str
-        :param folder: The folder with the cloned repository.
+        :param url: The url of the repository.
+        :type url: str
+        :param folder: The folder where the repository was being cloned.
         :type folder: str
         """
-        super().__init__(f'"git tag {tag}" in folder {folder} failed')
+        super().__init__('"git clone {url}" in folder {folder} failed')

@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/ssh_private_key_git_policy.py
+pythoneda/shared/git/ssh_private_key_git_policy.py
 
 This file declares the SshPrivateKeyGitPolicy class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda.value_object import attribute, sensitive, ValueObject
-
 import os
 import paramiko
+from pythoneda.value_object import attribute, sensitive, ValueObject
 from typing import Dict
 
 class SshPrivateKeyGitPolicy(ValueObject):

@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/git_repo.py
+pythoneda/shared/git/git_repo.py
 
 This file declares the GitRepo class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,20 +23,19 @@ from git import Git, Repo
 import logging
 import os
 from pythoneda.entity import Entity
+from pythoneda.shared.git.error_cloning_git_repository import ErrorCloningGitRepository
+from pythoneda.shared.git.git_checkout_failed import GitCheckoutFailed
+from pythoneda.shared.git.git_progress_logging import GitProgressLogging
+from pythoneda.shared.git.git_push import GitPush
+from pythoneda.shared.git.git_tag import GitTag
+from pythoneda.shared.git.ssh_private_key_git_policy import SshPrivateKeyGitPolicy
+from pythoneda.shared.git.version import Version
 from pythoneda.value_object import attribute
-from pythonedasharedgit.error_cloning_git_repository import ErrorCloningGitRepository
-from pythonedasharedgit.git_checkout_failed import GitCheckoutFailed
-from pythonedasharedgit.git_progress_logging import GitProgressLogging
-from pythonedasharedgit.git_push import GitPush
-from pythonedasharedgit.git_tag import GitTag
-from pythonedasharedgit.ssh_private_key_git_policy import SshPrivateKeyGitPolicy
-from pythonedasharedgit.version import Version
 import re
 import semver
 import subprocess
 from urllib.parse import urlparse
 from typing import Dict, List
-
 
 class GitRepo(Entity, abc.ABC):
     """

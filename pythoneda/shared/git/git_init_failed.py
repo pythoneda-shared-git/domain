@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/git_checkout_failed.py
+pythoneda/shared/git/git_init_failed.py
 
-This file defines the GitCheckoutFailed exception class.
+This file defines the GitInitFailed exception class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,29 +18,35 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-
-
-class GitCheckoutFailed(Exception):
+class GitInitFailed(Exception):
     """
-    Running git checkout [rev] failed.
+    git init failed.
 
-    Class name: GitCheckoutFailed
+    Class name: GitInitFailed
 
     Responsibilities:
-        - Represent the error when running git checkout.
+        - Represent an error when initializing a git repository.
 
     Collaborators:
         - None
     """
 
-    def __init__(self, url: str, rev: str, folder: str):
+    def __init__(self, folder: str, output: str):
         """
         Creates a new instance.
-        :param url: The url of the repository.
-        :type url: str
-        :param rev: The revision.
-        :type rev: str
-        :param folder: The folder with the cloned repository.
+        :param folder: The repository folder.
         :type folder: str
+        :param output: The output of the git init command.
+        :type output: str
         """
-        super().__init__(f'"git checkout {rev}" in folder {folder} failed')
+        super().__init__(f'"git init" failed (in {folder})')
+        self._output = output
+
+    @property
+    def output(self) -> str:
+        """
+        Retrieves the output of the command.
+        :return: Such output.
+        :rtype: str
+        """
+        return self._output

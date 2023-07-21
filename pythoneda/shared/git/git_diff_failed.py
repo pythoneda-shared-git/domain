@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/git_init_failed.py
+pythoneda/shared/git/git_diff_failed.py
 
-This file defines the GitInitFailed exception class.
+This file defines the GitDiffFailed exception class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,35 +18,23 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-class GitInitFailed(Exception):
+class GitDiffFailed(Exception):
     """
-    git init failed.
+    Running git diff failed.
 
-    Class name: GitInitFailed
+    Class name: GitDiffFailed
 
     Responsibilities:
-        - Represent an error when initializing a git repository.
+        - Represent the error when running git diff.
 
     Collaborators:
         - None
     """
 
-    def __init__(self, folder: str, output: str):
+    def __init__(self, folder: str):
         """
         Creates a new instance.
-        :param folder: The repository folder.
+        :param folder: The folder with the cloned repository.
         :type folder: str
-        :param output: The output of the git init command.
-        :type output: str
         """
-        super().__init__(f'"git init" failed (in {folder})')
-        self._output = output
-
-    @property
-    def output(self) -> str:
-        """
-        Retrieves the output of the command.
-        :return: Such output.
-        :rtype: str
-        """
-        return self._output
+        super().__init__(f'"git diff" in folder {folder} failed')

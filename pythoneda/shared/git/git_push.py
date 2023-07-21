@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/git_push.py
+pythoneda/shared/git/git_push.py
 
 This file declares the GitPush class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,12 +18,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda.value_object import attribute
-from pythonedasharedgit.git_push_failed import GitPushFailed
-
 import logging
+from pythoneda.value_object import attribute
+from pythoneda.shared.git.git_push_failed import GitPushFailed
 import subprocess
-
 
 class GitPush:
     """

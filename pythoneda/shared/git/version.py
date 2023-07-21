@@ -1,9 +1,9 @@
 """
-pythonedasharedgit/version.py
+pythoneda/shared/git/version.py
 
 This file declares the Version class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda.value_object import attribute, ValueObject
-
 import semver
 
 class Version(ValueObject):
