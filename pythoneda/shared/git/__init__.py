@@ -3,7 +3,7 @@ pythoneda/shared/git/__init__.py
 
 This file ensures pythoneda.shared.git is a package.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared-git/git
+Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
