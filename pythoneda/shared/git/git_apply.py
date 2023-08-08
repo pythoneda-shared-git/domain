@@ -1,7 +1,7 @@
 """
-pythoneda/shared/git/git_diff.py
+pythoneda/shared/git/git_apply.py
 
-This file declares the GitDiff class.
+This file declares the GitApply class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
@@ -19,25 +19,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import attribute
-from pythoneda.shared.git import GitDiffFailed
+from pythoneda.shared.git import GitApplyFailed
 import subprocess
 
-class GitDiff:
-    """
-    Provides git diff operations.
 
-    Class name: GitDiff
+class GitApply:
+    """
+    Provides git apply operations.
+
+    Class name: GitApply
 
     Responsibilities:
-        - Provides "git diff" operations.
+        - Provides "git apply" operations.
 
     Collaborators:
-        - pythonedasharedgit.git_diff_failed.GitDiffFailed: If the operation fails.
+        - pythoneda.shared.git.GitApplyFailed: If the operation fails.
     """
 
     def __init__(self, folder: str):
         """
-        Creates a new GitDiff instance for given folder.
+        Creates a new GitApply instance for given folder.
         :param folder: The cloned repository.
         :type folder: str
         """
@@ -54,7 +55,7 @@ class GitDiff:
         """
         return self._folder
 
-    def diff(self) -> str:
+    def apply(self) -> str:
         """
         Retrieves the diff.
         :return: The diff if the operation succeeds.
@@ -64,7 +65,7 @@ class GitDiff:
 
         try:
             execution = subprocess.run(
-                [ "git", "-C", self.folder, "diff"],
+                [ "git", "apply", "--3way" ],
                 check=True,
                 capture_output=True,
                 text=True,
@@ -73,6 +74,6 @@ class GitDiff:
             result = execution.stdout
         except subprocess.CalledProcessError as err:
             logging.getLogger(__name__).error(err)
-            raise GitDiffFailed(self.folder)
+            raise GitApplyFailed(self.folder)
 
         return result

@@ -22,15 +22,8 @@ import abc
 from git import Git, Repo
 import logging
 import os
-from pythoneda.entity import Entity
-from pythoneda.shared.git.error_cloning_git_repository import ErrorCloningGitRepository
-from pythoneda.shared.git.git_checkout_failed import GitCheckoutFailed
-from pythoneda.shared.git.git_progress_logging import GitProgressLogging
-from pythoneda.shared.git.git_push import GitPush
-from pythoneda.shared.git.git_tag import GitTag
-from pythoneda.shared.git.ssh_private_key_git_policy import SshPrivateKeyGitPolicy
-from pythoneda.shared.git.version import Version
-from pythoneda.value_object import attribute
+from pythoneda import attribute, Entity
+from pythoneda.shared.git import ErrorCloningGitRepository, GitCheckoutFailed, GitProgressLogging, GitPush, GitTag, SshPrivateKeyGitPolicy, Version
 import re
 import semver
 import subprocess

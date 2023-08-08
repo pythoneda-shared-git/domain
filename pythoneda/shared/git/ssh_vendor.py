@@ -19,9 +19,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from paramiko import RSAKey, AutoAddPolicy
-from paramiko.client import SSHClient
 from paramiko.agent import AgentRequestHandler, AgentServerProxy
-from pythoneda.value_object import attribute, sensitive
+from paramiko.client import SSHClient
+from pythoneda import attribute, sensitive
 
 class SshVendor(object):
     """

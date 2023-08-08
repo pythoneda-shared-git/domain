@@ -20,8 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import logging
 import os
-from pythoneda.shared.git.git_tag_failed import GitTagFailed
-from pythoneda.value_object import attribute
+from pythoneda import attribute
+from pythoneda.shared.git import GitTagFailed
 import re
 import semver
 import subprocess

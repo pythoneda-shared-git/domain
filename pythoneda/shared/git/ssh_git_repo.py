@@ -27,9 +27,8 @@ import os
 from paramiko import RSAKey, AutoAddPolicy
 from paramiko.client import SSHClient
 from paramiko.agent import AgentRequestHandler, AgentServerProxy
-from pythoneda.shared.git.git_repo import GitRepo
-from pythoneda.shared.git.ssh_vendor import SshVendor
-from pythoneda.value_object import attribute, sensitive
+from pythoneda import attribute, sensitive
+from pythoneda.shared.git import GitRepo, SshVendor
 import shutil
 import tempfile
 

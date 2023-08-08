@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os
 import paramiko
-from pythoneda.value_object import attribute, sensitive, ValueObject
+from pythoneda import attribute, sensitive, ValueObject
 from typing import Dict
 
 class SshPrivateKeyGitPolicy(ValueObject):

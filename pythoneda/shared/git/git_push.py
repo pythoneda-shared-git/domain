@@ -19,8 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import logging
-from pythoneda.value_object import attribute
-from pythoneda.shared.git.git_push_failed import GitPushFailed
+from pythoneda import attribute
+from pythoneda.shared.git import GitPushFailed
 import subprocess
 
 class GitPush:
