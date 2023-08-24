@@ -18,7 +18,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-class GitAddFailed(Exception):
+from pythoneda import BaseObject
+
+class GitAddFailed(Exception, BaseObject):
     """
     Adding a file to the git repository failed.
 

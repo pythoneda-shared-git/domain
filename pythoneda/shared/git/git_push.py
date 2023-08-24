@@ -18,12 +18,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import logging
-from pythoneda import attribute
+from pythoneda import attribute, BaseObject
 from pythoneda.shared.git import GitPushFailed
 import subprocess
 
-class GitPush:
+class GitPush(BaseObject):
     """
     Provides git push operations.
 
@@ -71,8 +70,8 @@ class GitPush:
                 cwd=self.folder,
             )
         except subprocess.CalledProcessError as err:
-            logging.getLogger(__name__).error(err.stdout)
-            logging.getLogger(__name__).error(err.stderr)
+            logger().error(err.stdout)
+            logger().error(err.stderr)
             raise GitPushFailed(self.folder)
 
         return True
@@ -94,8 +93,8 @@ class GitPush:
                 cwd=self.folder,
             )
         except subprocess.CalledProcessError as err:
-            logging.getLogger(__name__).error(err.stdout)
-            logging.getLogger(__name__).error(err.stderr)
+            logger().error(err.stdout)
+            logger().error(err.stderr)
             raise GitPushFailed(self.folder)
 
         return True

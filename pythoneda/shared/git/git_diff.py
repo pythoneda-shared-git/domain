@@ -18,11 +18,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda import attribute
+from pythoneda import attribute, BaseObject
 from pythoneda.shared.git import GitDiffFailed
 import subprocess
 
-class GitDiff:
+class GitDiff(BaseObject):
     """
     Provides git diff operations.
 
@@ -72,7 +72,7 @@ class GitDiff:
             )
             result = execution.stdout
         except subprocess.CalledProcessError as err:
-            logging.getLogger(__name__).error(err)
+            logger().error(err)
             raise GitDiffFailed(self.folder)
 
         return result

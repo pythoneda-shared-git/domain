@@ -1,7 +1,7 @@
 """
-pythoneda/shared/git/git_apply.py
+pythoneda/shared/git/git_stash.py
 
-This file declares the GitApply class.
+This file declares the GitStash class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
@@ -19,25 +19,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import attribute, BaseObject
-from pythoneda.shared.git import GitApplyFailed
+from pythoneda.shared.git import GitStashFailed
 import subprocess
 
-class GitApply(BaseObject):
+class GitStash(BaseObject):
     """
-    Provides git apply operations.
+    Provides git stash operations.
 
-    Class name: GitApply
+    Class name: GitStash
 
     Responsibilities:
-        - Provides "git apply" operations.
+        - Provides "git stash" operations.
 
     Collaborators:
-        - pythoneda.shared.git.GitApplyFailed: If the operation fails.
+        - pythoneda.shared.git.GitStashFailed: If the operation fails.
     """
 
     def __init__(self, folder: str):
         """
-        Creates a new GitApply instance for given folder.
+        Creates a new GitStash instance for given folder.
         :param folder: The cloned repository.
         :type folder: str
         """
@@ -54,9 +54,44 @@ class GitApply(BaseObject):
         """
         return self._folder
 
-    def apply(self) -> str:
+    def push(self, message:str=None) -> str:
         """
-        Applies the changes.
+        Performs a git stash push.
+        :param message: The message.
+        :type message: str
+        :return: The stash id.
+        :rtype: str
+        """
+        result = None
+
+        args = [ "git", "stash", "push" ]
+        if message:
+            args.extend(["-m", message])
+        try:
+            execution = subprocess.run(
+                args,
+                check=True,
+                capture_output=True,
+                text=True,
+                cwd=self.folder,
+            )
+            output = execution.stdout
+
+            # Parse the output to get the stash identifier
+            match = re.search(r'Saved working directory and index state (\w+ on .+: [a-f0-9]+ .+)', output)
+            if match:
+                result = match.group(1)
+        except subprocess.CalledProcessError as err:
+            logger().error(err)
+            raise GitStashFailed(self.folder)
+
+        return result
+
+    def pop(self, stashId:str) -> str:
+        """
+        Performs a git stash pop for given id.
+        :param stashId: The stash id.
+        :type stashId: str
         :return: The output of the operation, should it succeeds.
         :rtype: str
         """
@@ -64,7 +99,7 @@ class GitApply(BaseObject):
 
         try:
             execution = subprocess.run(
-                [ "git", "apply" ],
+                ["git", "stash", "pop", stashId],
                 check=True,
                 capture_output=True,
                 text=True,
@@ -73,29 +108,6 @@ class GitApply(BaseObject):
             result = execution.stdout
         except subprocess.CalledProcessError as err:
             logger().error(err)
-            raise GitApplyFailed(self.folder)
-
-        return result
-
-    def apply3way(self) -> str:
-        """
-        Retrieves the diff.
-        :return: The diff if the operation succeeds.
-        :rtype: str
-        """
-        result = None
-
-        try:
-            execution = subprocess.run(
-                [ "git", "apply", "--3way" ],
-                check=True,
-                capture_output=True,
-                text=True,
-                cwd=self.folder,
-            )
-            result = execution.stdout
-        except subprocess.CalledProcessError as err:
-            logger().error(err)
-            raise GitApplyFailed(self.folder)
+            raise GitStashFailed(self.folder)
 
         return result

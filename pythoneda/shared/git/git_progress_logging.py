@@ -19,10 +19,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from git.util import RemoteProgress
+from pythoneda import BaseObject
 
-import logging
-
-class GitProgressLogging(RemoteProgress):
+class GitProgressLogging(RemoteProgress, BaseObject):
     """
     Shows the progress of long-running git operations.
 
@@ -47,4 +46,4 @@ class GitProgressLogging(RemoteProgress):
         :param message: The message.
         :type message: str
         """
-        logging.getLogger(__name__).debug(self._cur_line)
+        logger().debug(self._cur_line)

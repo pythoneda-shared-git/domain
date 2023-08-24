@@ -18,16 +18,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import logging
 import os
-from pythoneda import attribute
+from pythoneda import attribute, BaseObject
 from pythoneda.shared.git import GitTagFailed
 import re
 import semver
 import subprocess
 from typing import Dict
 
-class GitTag():
+class GitTag(BaseObject):
     """
     Provides git operations related to tags.
 
@@ -79,8 +78,8 @@ class GitTag():
                 cwd=self._folder,
             )
         except subprocess.CalledProcessError as err:
-            logging.getLogger(__name__).error(err.stdout)
-            logging.getLogger(__name__).error(err.stderr)
+            logger().error(err.stdout)
+            logger().error(err.stderr)
             raise GitTagFailed(tag, self.folder)
         print('done')
         return True

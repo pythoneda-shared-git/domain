@@ -1,7 +1,7 @@
 """
-pythoneda/shared/git/git_checkout_failed.py
+pythoneda/shared/git/git_stash_failed.py
 
-This file defines the GitCheckoutFailed exception class.
+This file defines the GitStashFailed exception class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
@@ -20,27 +20,23 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import BaseObject
 
-class GitCheckoutFailed(Exception, BaseObject):
+class GitStashFailed(Exception, BaseObject):
     """
-    Running git checkout [rev] failed.
+    Running git stash failed.
 
-    Class name: GitCheckoutFailed
+    Class name: GitStashFailed
 
     Responsibilities:
-        - Represent the error when running git checkout.
+        - Represent the error when running git stash.
 
     Collaborators:
         - None
     """
 
-    def __init__(self, url: str, rev: str, folder: str):
+    def __init__(self, folder: str):
         """
         Creates a new instance.
-        :param url: The url of the repository.
-        :type url: str
-        :param rev: The revision.
-        :type rev: str
         :param folder: The folder with the cloned repository.
         :type folder: str
         """
-        super().__init__(f'"git checkout {rev}" in folder {folder} failed')
+        super().__init__(f'"git stash" in folder {folder} failed')

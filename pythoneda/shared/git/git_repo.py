@@ -20,7 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import abc
 from git import Git, Repo
-import logging
 import os
 from pythoneda import attribute, Entity
 from pythoneda.shared.git import ErrorCloningGitRepository, GitCheckoutFailed, GitProgressLogging, GitPush, GitTag, SshPrivateKeyGitPolicy, Version
@@ -172,7 +171,7 @@ class GitRepo(Entity, abc.ABC):
             return owner, repo_name
 
         except:
-            logging.getLogger(cls.__name__).error(f"Invalid repo: {url}")
+            logger().error(f"Invalid repo: {url}")
 
     def sha256(self) -> str:
         """
@@ -187,7 +186,7 @@ class GitRepo(Entity, abc.ABC):
             text=True,
         )
         output = result.stdout
-        logging.getLogger(__name__).debug(
+        logger().debug(
             f"nix-prefetch-git --deepClone {self.url}/tree/{self.rev} -> {output}"
         )
 
@@ -232,8 +231,8 @@ class GitRepo(Entity, abc.ABC):
                 cwd=folder,
             )
         except subprocess.CalledProcessError as err:
-            logging.getLogger(__name__).error(err.stdout)
-            logging.getLogger(__name__).error(err.stderr)
+            logger().error(err.stdout)
+            logger().error(err.stderr)
             raise ErrorCloningGitRepository(self.url, folder)
         try:
             subprocess.run(
@@ -245,8 +244,8 @@ class GitRepo(Entity, abc.ABC):
                 cwd=result,
             )
         except subprocess.CalledProcessError as err:
-            logging.getLogger(__name__).error(err.stdout)
-            logging.getLogger(__name__).error(err.stderr)
+            logger().error(err.stdout)
+            logger().error(err.stderr)
             raise GitCheckoutFailed(self.url, self.rev, folder)
 
         return Repo(result)
