@@ -32,6 +32,7 @@ from .git_tag_failed import GitTagFailed
 from .git_add import GitAdd
 from .git_apply import GitApply
 from .git_diff import GitDiff
+from .git_init import GitInit
 from .git_progress_logging import GitProgressLogging
 from .git_push import GitPush
 from .git_stash import GitStash

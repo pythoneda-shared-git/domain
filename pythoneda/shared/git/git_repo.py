@@ -297,7 +297,7 @@ class GitRepo(Entity, abc.ABC):
         """
         Creates a new tag increasing the major in current version.
         :return: The new version.
-        :rtype: Version from pythonedasharedgit.version
+        :rtype: pythoneda.shared.git.Version
         """
         version = Version(self.latest_tag()).increase_major()
         self.tag_version(version)
@@ -307,7 +307,7 @@ class GitRepo(Entity, abc.ABC):
         """
         Creates a new tag increasing the minor in current version.
         :return: The new version.
-        :rtype: Version from pythonedasharedgit.version
+        :rtype: pythoneda.shared.git.Version
         """
         version = Version(self.latest_tag()).increase_minor()
         self.tag_version(version)
@@ -317,7 +317,7 @@ class GitRepo(Entity, abc.ABC):
         """
         Creates a new tag increasing the patch in current version.
         :return: The new version.
-        :rtype: Version from pythonedasharedgit.version
+        :rtype: pythoneda.shared.git.Version
         """
         version = Version(self.latest_tag()).increase_patch()
         self.tag_version(version)
@@ -327,7 +327,7 @@ class GitRepo(Entity, abc.ABC):
         """
         Creates a new tag increasing the prerelease in current version.
         :return: The new version.
-        :rtype: Version from pythonedasharedgit.version
+        :rtype: pythoneda.shared.git.Version
         """
         version = Version(self.latest_tag()).increase_prerelease()
         self.tag_version(version)
@@ -337,9 +337,8 @@ class GitRepo(Entity, abc.ABC):
         """
         Creates a new tag increasing the build in current version.
         :return: The new version.
-        :rtype: Version from pythonedasharedgit.version
+        :rtype: pythoneda.shared.git.Version
         """
-        print(f'latest_tag -> {self.latest_tag()}')
         version = Version(self.latest_tag()).increase_build()
         self.tag_version(version)
         return version

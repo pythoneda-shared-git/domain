@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import attribute, BaseObject
 from pythoneda.shared.git import GitStashFailed
+import re
 import subprocess
 
 class GitStash(BaseObject):

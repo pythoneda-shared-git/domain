@@ -32,7 +32,7 @@ class GitDiff(BaseObject):
         - Provides "git diff" operations.
 
     Collaborators:
-        - pythonedasharedgit.git_diff_failed.GitDiffFailed: If the operation fails.
+        - pythoneda.shared.git.GitDiffFailed: If the operation fails.
     """
 
     def __init__(self, folder: str):

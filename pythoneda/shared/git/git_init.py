@@ -1,7 +1,7 @@
 """
-pythoneda/shared/git/git_add.py
+pythoneda/shared/git/git_init.py
 
-This file declares the GitAdd class.
+This file declares the GitInit class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
@@ -19,25 +19,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import attribute, BaseObject
-from pythoneda.shared.git import GitAddFailed
+from pythoneda.shared.git import GitDiffFailed
 import subprocess
 
-class GitAdd(BaseObject):
+class GitInit(BaseObject):
     """
-    Provides git add operations.
+    Provides git init operations.
 
-    Class name: GitAdd
+    Class name: GitInit
 
     Responsibilities:
-        - Provides "git add" operations.
+        - Provides "git init" operations.
 
     Collaborators:
-        - pythoneda.shared.git.GitAddFailed: If the operation fails.
+        - pythoneda.shared.git.GitInitFailed: If the operation fails.
     """
 
     def __init__(self, folder: str):
         """
-        Creates a new GitAdd instance for given folder.
+        Creates a new GitInit instance for given folder.
         :param folder: The cloned repository.
         :type folder: str
         """
@@ -54,19 +54,15 @@ class GitAdd(BaseObject):
         """
         return self._folder
 
-    def add(self, file:str) -> str:
+    def init(self):
         """
-        Adds the current changes to the staging area.
-        :param file: The file to add.
-        :type file: str
-        :return: The output of the operation, should it succeeds.
-        :rtype: str
+        Runs git init.
         """
         result = None
 
         try:
             execution = subprocess.run(
-                ["git", "add", file],
+                ["git", "-C", self.folder, "init"],
                 check=True,
                 capture_output=True,
                 text=True,
@@ -75,6 +71,6 @@ class GitAdd(BaseObject):
             result = execution.stdout
         except subprocess.CalledProcessError as err:
             logger().error(err)
-            raise GitAddFailed(self.folder)
+            raise GitInitFailed(self.folder)
 
         return result
