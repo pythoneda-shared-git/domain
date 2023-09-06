@@ -78,8 +78,8 @@ class GitTag(BaseObject):
                 cwd=self._folder,
             )
         except subprocess.CalledProcessError as err:
-            logger().error(err.stdout)
-            logger().error(err.stderr)
+            self.__class__.logger("pythoneda.shared.git.GitTag").error(err.stdout)
+            self.__class__.logger("pythoneda.shared.git.GitTag").error(err.stderr)
             raise GitTagFailed(tag, self.folder)
         print('done')
         return True

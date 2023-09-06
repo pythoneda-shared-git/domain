@@ -72,7 +72,7 @@ class GitDiff(BaseObject):
             )
             result = execution.stdout
         except subprocess.CalledProcessError as err:
-            logger().error(err)
+            self.__class__.logger("pythoneda.shared.git.GitDiff").error(err)
             raise GitDiffFailed(self.folder)
 
         return result

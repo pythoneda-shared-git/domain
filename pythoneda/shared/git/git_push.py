@@ -70,8 +70,8 @@ class GitPush(BaseObject):
                 cwd=self.folder,
             )
         except subprocess.CalledProcessError as err:
-            logger().error(err.stdout)
-            logger().error(err.stderr)
+            self.__class__.logger("pythoneda.shared.git.GitPush").error(err.stdout)
+            self.__class__.logger("pythoneda.shared.git.GitPush").error(err.stderr)
             raise GitPushFailed(self.folder)
 
         return True
@@ -82,7 +82,6 @@ class GitPush(BaseObject):
         :return: True if the operation succeeds.
         :rtype: bool
         """
-        print(f'Pushing tags in {self._folder}')
         try:
             subprocess.run(
                 ["git", "push", "--tags"],
@@ -93,8 +92,8 @@ class GitPush(BaseObject):
                 cwd=self.folder,
             )
         except subprocess.CalledProcessError as err:
-            logger().error(err.stdout)
-            logger().error(err.stderr)
+            self.__class__.logger("pythoneda.shared.git.GitPush").error(err.stdout)
+            self.__class__.logger("pythoneda.shared.git.GitPush").error(err.stderr)
             raise GitPushFailed(self.folder)
 
         return True

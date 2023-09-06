@@ -70,7 +70,7 @@ class GitInit(BaseObject):
             )
             result = execution.stdout
         except subprocess.CalledProcessError as err:
-            logger().error(err)
+            self.__class__.logger("pythoneda.shared.git.GitInit").error(err)
             raise GitInitFailed(self.folder)
 
         return result

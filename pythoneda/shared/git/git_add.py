@@ -74,7 +74,7 @@ class GitAdd(BaseObject):
             )
             result = execution.stdout
         except subprocess.CalledProcessError as err:
-            logger().error(err)
+            self.__class__.logger("pythoneda.shared.git.GitAdd").error(err)
             raise GitAddFailed(self.folder)
 
         return result

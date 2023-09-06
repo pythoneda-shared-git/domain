@@ -83,7 +83,7 @@ class GitStash(BaseObject):
             if match:
                 result = match.group(1)
         except subprocess.CalledProcessError as err:
-            logger().error(err)
+            self.__class__.logger("pythoneda.shared.git.GitStash").error(err)
             raise GitStashFailed(self.folder)
 
         return result
@@ -108,7 +108,7 @@ class GitStash(BaseObject):
             )
             result = execution.stdout
         except subprocess.CalledProcessError as err:
-            logger().error(err)
+            self.__class__.logger("pythoneda.shared.git.GitStash").error(err)
             raise GitStashFailed(self.folder)
 
         return result

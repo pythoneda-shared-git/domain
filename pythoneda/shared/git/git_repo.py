@@ -171,7 +171,7 @@ class GitRepo(Entity, abc.ABC):
             return owner, repo_name
 
         except:
-            logger().error(f"Invalid repo: {url}")
+            self.__class__.logger("pythoneda.shared.git.GitRepo").error(f"Invalid repo: {url}")
 
     def sha256(self) -> str:
         """
@@ -186,7 +186,7 @@ class GitRepo(Entity, abc.ABC):
             text=True,
         )
         output = result.stdout
-        logger().debug(
+        self.__class__.logger("pythoneda.shared.git.GitRepo").debug(
             f"nix-prefetch-git --deepClone {self.url}/tree/{self.rev} -> {output}"
         )
 
@@ -231,8 +231,8 @@ class GitRepo(Entity, abc.ABC):
                 cwd=folder,
             )
         except subprocess.CalledProcessError as err:
-            logger().error(err.stdout)
-            logger().error(err.stderr)
+            self.__class__.logger("pythoneda.shared.git.GitRepo").error(err.stdout)
+            self.__class__.logger("pythoneda.shared.git.GitRepo").error(err.stderr)
             raise ErrorCloningGitRepository(self.url, folder)
         try:
             subprocess.run(
@@ -244,8 +244,8 @@ class GitRepo(Entity, abc.ABC):
                 cwd=result,
             )
         except subprocess.CalledProcessError as err:
-            logger().error(err.stdout)
-            logger().error(err.stderr)
+            self.__class__.logger("pythoneda.shared.git.GitRepo").error(err.stdout)
+            self.__class__.logger("pythoneda.shared.git.GitRepo").error(err.stderr)
             raise GitCheckoutFailed(self.url, self.rev, folder)
 
         return Repo(result)
