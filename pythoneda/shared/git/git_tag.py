@@ -67,7 +67,6 @@ class GitTag(BaseObject):
         :return: True if the operation succeeds.
         :rtype: bool
         """
-        print(f'Creating tag {tag} in {self._folder}')
         try:
             subprocess.run(
                 ["git", "tag", tag],
@@ -78,8 +77,7 @@ class GitTag(BaseObject):
                 cwd=self._folder,
             )
         except subprocess.CalledProcessError as err:
-            self.__class__.logger("pythoneda.shared.git.GitTag").error(err.stdout)
-            self.__class__.logger("pythoneda.shared.git.GitTag").error(err.stderr)
+            GitTag.logger("pythoneda.shared.git.GitTag").error(err.stdout)
+            GitTag.logger("pythoneda.shared.git.GitTag").error(err.stderr)
             raise GitTagFailed(tag, self.folder)
-        print('done')
         return True

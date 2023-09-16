@@ -54,9 +54,11 @@ class GitApply(BaseObject):
         """
         return self._folder
 
-    def apply(self) -> str:
+    def apply(self, patchFile:str) -> str:
         """
         Applies the changes.
+        :param patchFile: The location of the patch file to apply.
+        :type patchFile: str
         :return: The output of the operation, should it succeeds.
         :rtype: str
         """
@@ -64,7 +66,7 @@ class GitApply(BaseObject):
 
         try:
             execution = subprocess.run(
-                [ "git", "apply" ],
+                [ "git", "apply", patchFile ],
                 check=True,
                 capture_output=True,
                 text=True,

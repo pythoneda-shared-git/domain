@@ -289,7 +289,6 @@ class GitRepo(Entity, abc.ABC):
         :param version: The new version.
         :type version: Version
         """
-        print(f'folder -> {self._folder}, type -> {type(self._folder)}')
         GitTag(self._folder).create_tag(version.value)
         GitPush(self._folder).push_tags()
 

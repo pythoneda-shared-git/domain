@@ -116,7 +116,6 @@ class SshGitRepo(GitRepo):
         os.environ['GIT_SSH_COMMAND'] = ssh_cmd
         result = Repo.clone_from(self.url, self._folder)
         self._repo = result
-        print(f'repo -> {result}')
         return result
 
 
