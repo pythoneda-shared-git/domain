@@ -56,7 +56,7 @@ class GitAdd(BaseObject):
 
     def add(self, file:str) -> str:
         """
-        Adds the current changes to the staging area.
+        Adds changes in given file to the staging area.
         :param file: The file to add.
         :type file: str
         :return: The output of the operation, should it succeeds.
@@ -74,7 +74,30 @@ class GitAdd(BaseObject):
             )
             result = execution.stdout
         except subprocess.CalledProcessError as err:
-            self.__class__.logger("pythoneda.shared.git.GitAdd").error(err)
+            GitAdd.logger().error(err)
+            raise GitAddFailed(self.folder)
+
+        return result
+
+    def add_all(self) -> str:
+        """
+        Adds all changes to the staging area.
+        :return: The output of the operation, should it succeeds.
+        :rtype: str
+        """
+        result = None
+
+        try:
+            execution = subprocess.run(
+                ["git", "add", "-a"],
+                check=True,
+                capture_output=True,
+                text=True,
+                cwd=self.folder,
+            )
+            result = execution.stdout
+        except subprocess.CalledProcessError as err:
+            GitAdd.logger().error(err)
             raise GitAddFailed(self.folder)
 
         return result

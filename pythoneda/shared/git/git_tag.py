@@ -77,7 +77,7 @@ class GitTag(BaseObject):
                 cwd=self._folder,
             )
         except subprocess.CalledProcessError as err:
-            GitTag.logger("pythoneda.shared.git.GitTag").error(err.stdout)
-            GitTag.logger("pythoneda.shared.git.GitTag").error(err.stderr)
+            GitTag.logger().error(err.stdout)
+            GitTag.logger().error(err.stderr)
             raise GitTagFailed(tag, self.folder)
         return True

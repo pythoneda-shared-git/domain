@@ -70,8 +70,8 @@ class GitPush(BaseObject):
                 cwd=self.folder,
             )
         except subprocess.CalledProcessError as err:
-            self.__class__.logger("pythoneda.shared.git.GitPush").error(err.stdout)
-            self.__class__.logger("pythoneda.shared.git.GitPush").error(err.stderr)
+            GitPush.logger().error(err.stdout)
+            GitPush.logger().error(err.stderr)
             raise GitPushFailed(self.folder)
 
         return True
@@ -92,8 +92,8 @@ class GitPush(BaseObject):
                 cwd=self.folder,
             )
         except subprocess.CalledProcessError as err:
-            self.__class__.logger("pythoneda.shared.git.GitPush").error(err.stdout)
-            self.__class__.logger("pythoneda.shared.git.GitPush").error(err.stderr)
+            GitPush.logger().error(err.stdout)
+            GitPush.logger().error(err.stderr)
             raise GitPushFailed(self.folder)
 
         return True

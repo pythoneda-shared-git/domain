@@ -74,7 +74,7 @@ class GitApply(BaseObject):
             )
             result = execution.stdout
         except subprocess.CalledProcessError as err:
-            self.__class__.logger().error(err)
+            GitApply.logger().error(err)
             raise GitApplyFailed(self.folder)
 
         return result
@@ -97,7 +97,7 @@ class GitApply(BaseObject):
             )
             result = execution.stdout
         except subprocess.CalledProcessError as err:
-            self.__class__.logger().error(err)
+            GitApply.logger().error(err)
             raise GitApplyFailed(self.folder)
 
         return result

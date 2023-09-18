@@ -46,4 +46,4 @@ class GitProgressLogging(RemoteProgress, BaseObject):
         :param message: The message.
         :type message: str
         """
-        self.__class__.logger("pythoneda.shared.git.GitProgressLogging").debug(self._cur_line)
+        GitProgressLogging.logger().debug(self._cur_line)
