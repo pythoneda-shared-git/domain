@@ -22,6 +22,7 @@ __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 
 from .error_cloning_git_repository import ErrorCloningGitRepository
 from .git_add_failed import GitAddFailed
+from .git_add_all_failed import GitAddAllFailed
 from .git_apply_failed import GitApplyFailed
 from .git_checkout_failed import GitCheckoutFailed
 from .git_diff_failed import GitDiffFailed

@@ -1,7 +1,7 @@
 """
-pythoneda/shared/git/git_add_failed.py
+pythoneda/shared/git/git_add_all_failed.py
 
-This file defines the GitAddFailed exception class.
+This file defines the GitAddAllFailed exception class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
@@ -20,30 +20,29 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import BaseObject
 
-class GitAddFailed(Exception, BaseObject):
-    """
-    Adding a file to the git repository failed.
 
-    Class name: GitAddFailed
+class GitAddAllFailed(Exception, BaseObject):
+    """
+    Adding all changes to the git repository failed.
+
+    Class name: GitAddAllFailed
 
     Responsibilities:
-        - Represent the error when adding a file to a git repository.
+        - Represent the error when adding all changes to a git repository.
 
     Collaborators:
         - None
     """
 
-    def __init__(self, folder:str, file:str, output:str):
+    def __init__(self, folder:str, output:str):
         """
-        Creates a new GitAddFailed instance.
+        Creates a new GitAddAllFailed instance.
         :param folder: The repository folder.
         :type folder: str
-        :param file: The file we tried to add.
-        :type file: str
         :param output: The output of the git command.
         :type output: str
         """
-        super().__init__(f'"git add {file}" failed in {folder}')
+        super().__init__(f'"git add -a" failed in {folder}')
         self._output = output
 
     @property

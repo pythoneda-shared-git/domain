@@ -18,8 +18,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from .git_add_failed import GitAddFailed
+from .git_add_all_failed import GitAddAllFailed
 from pythoneda import attribute, BaseObject
-from pythoneda.shared.git import GitAddFailed
 import subprocess
 
 class GitAdd(BaseObject):
@@ -75,7 +76,8 @@ class GitAdd(BaseObject):
             result = execution.stdout
         except subprocess.CalledProcessError as err:
             GitAdd.logger().error(err)
-            raise GitAddFailed(self.folder)
+            GitAdd.logger().error(err.stderr)
+            raise GitAddFailed(self.folder, file, err.stderr)
 
         return result
 
@@ -89,7 +91,7 @@ class GitAdd(BaseObject):
 
         try:
             execution = subprocess.run(
-                ["git", "add", "-a"],
+                ["git", "add", "--all"],
                 check=True,
                 capture_output=True,
                 text=True,
@@ -98,6 +100,7 @@ class GitAdd(BaseObject):
             result = execution.stdout
         except subprocess.CalledProcessError as err:
             GitAdd.logger().error(err)
-            raise GitAddFailed(self.folder)
+            GitAdd.logger().error(err.stderr)
+            raise GitAddAllFailed(self.folder, err.stderr)
 
         return result
