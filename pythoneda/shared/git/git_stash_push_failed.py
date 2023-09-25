@@ -1,7 +1,7 @@
 """
-pythoneda/shared/git/git_stash_failed.py
+pythoneda/shared/git/git_stash_push_failed.py
 
-This file defines the GitStashFailed exception class.
+This file defines the GitStashPushFailed exception class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
@@ -20,14 +20,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import BaseObject
 
-class GitStashFailed(Exception, BaseObject):
+class GitStashPushFailed(Exception, BaseObject):
     """
-    Running git stash failed.
+    Running git stash push failed.
 
-    Class name: GitStashFailed
+    Class name: GitStashPushFailed
 
     Responsibilities:
-        - Represent the error when running git stash.
+        - Represent the error when running git stash push.
 
     Collaborators:
         - None
@@ -39,4 +39,4 @@ class GitStashFailed(Exception, BaseObject):
         :param folder: The folder with the cloned repository.
         :type folder: str
         """
-        super().__init__(f'"git stash" in folder {folder} failed')
+        super().__init__(f'"git stash push" in folder {folder} failed')

@@ -28,7 +28,8 @@ from .git_checkout_failed import GitCheckoutFailed
 from .git_diff_failed import GitDiffFailed
 from .git_init_failed import GitInitFailed
 from .git_push_failed import GitPushFailed
-from .git_stash_failed import GitStashFailed
+from .git_stash_pop_failed import GitStashPopFailed
+from .git_stash_push_failed import GitStashPushFailed
 from .git_tag_failed import GitTagFailed
 from .git_add import GitAdd
 from .git_apply import GitApply

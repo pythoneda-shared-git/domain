@@ -18,8 +18,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from .git_stash_pop_failed import GitStashPopFailed
+from .git_stash_push_failed import GitStashPushFailed
 from pythoneda import attribute, BaseObject
-from pythoneda.shared.git import GitStashFailed
 import re
 import subprocess
 
@@ -84,7 +85,7 @@ class GitStash(BaseObject):
                 result = match.group(1)
         except subprocess.CalledProcessError as err:
             GitStash.logger().error(err)
-            raise GitStashFailed(self.folder)
+            raise GitStashPushFailed(self.folder)
 
         return result
 
@@ -109,6 +110,6 @@ class GitStash(BaseObject):
             result = execution.stdout
         except subprocess.CalledProcessError as err:
             GitStash.logger().error(err)
-            raise GitStashFailed(self.folder)
+            raise GitStashPopFailed(self.folder)
 
         return result
