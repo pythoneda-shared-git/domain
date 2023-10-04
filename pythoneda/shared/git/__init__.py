@@ -44,3 +44,4 @@ from .ssh_vendor import SshVendor
 from .version import Version
 from .git_repo import GitRepo
 from .ssh_git_repo import SshGitRepo
+from .git_commit import GitCommit

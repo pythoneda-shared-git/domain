@@ -76,3 +76,26 @@ class GitDiff(BaseObject):
             raise GitDiffFailed(self.folder)
 
         return result
+
+    def committed_diff(self) -> str:
+        """
+        Retrieves the diff.
+        :return: The diff if the operation succeeds.
+        :rtype: str
+        """
+        result = None
+
+        try:
+            execution = subprocess.run(
+                [ "git", "-C", self.folder, "diff", "HEAD^", "HEAD"],
+                check=True,
+                capture_output=True,
+                text=True,
+                cwd=self.folder,
+            )
+            result = execution.stdout
+        except subprocess.CalledProcessError as err:
+            GitDiff.logger().error(err)
+            raise GitDiffFailed(self.folder)
+
+        return result

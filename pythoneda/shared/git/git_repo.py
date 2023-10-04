@@ -18,7 +18,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import abc
 from git import Git, Repo
 import os
 from pythoneda import attribute, Entity
@@ -29,7 +28,7 @@ import subprocess
 from urllib.parse import urlparse
 from typing import Dict, List
 
-class GitRepo(Entity, abc.ABC):
+class GitRepo(Entity):
     """
     Represents a Git repository.
 
@@ -42,7 +41,7 @@ class GitRepo(Entity, abc.ABC):
         - None
     """
 
-    def __init__(self, url: str, rev: str):
+    def __init__(self, url: str, rev: str, folder:str=None):
         """
         Creates a new Git repository instance.
         :param url: The url of the repository.
@@ -53,7 +52,7 @@ class GitRepo(Entity, abc.ABC):
         super().__init__()
         self._url = url
         self._rev = rev
-        self._folder = None
+        self._folder = folder
         self._repo = None
 
     @property
@@ -85,6 +84,27 @@ class GitRepo(Entity, abc.ABC):
         :rtype: str
         """
         return self._folder
+
+    @classmethod
+    def from_folder(cls, folder:str):
+        """
+        Creates a GitRepo from given folder.
+        :param folder: The cloned repository.
+        :type folder: str
+        :return: A GitRepo.
+        :rtype: pythoneda.shared.git.GitRepo
+        """
+        result = None
+
+        repo = Repo(folder)
+
+        if repo.active_branch and repo.active_branch.tracking_branch():
+            remote = repo.active_branch.tracking_branch().remote_name
+            branch = repo.active_branch.tracking_branch().name.split('/')[-1]
+            url = repo.config_reader().get_value("remote", remote, "url")
+            result = GitRepo(url, branch, folder)
+
+        return result
 
     def latest_tag(self) -> str:
         """
@@ -192,7 +212,6 @@ class GitRepo(Entity, abc.ABC):
 
         return output.splitlines()[-1]
 
-    @abc.abstractmethod
     def clone(self, sshUsername: str, privateKeyFile: str, privateKeyPassphrase: str) -> Repo:
         """
         Clones this repo in given folder.
@@ -205,6 +224,7 @@ class GitRepo(Entity, abc.ABC):
         :return: A git.Repo instance.
         :rtype: git.Repo
         """
+        raise NotImplementedError()
 
     def raw_clone(self, folder: str, subfolder:str=None) -> Repo:
         """

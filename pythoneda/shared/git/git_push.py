@@ -54,9 +54,33 @@ class GitPush(BaseObject):
         """
         return self._folder
 
-    def push(self) -> bool:
+    def push_branch(self, branch:str) -> bool:
         """
-        Pushes changes to a remote repository.
+        Pushes changes in a given branch to a remote repository.
+        :param branch: The branch.
+        :type branch: str
+        :return: True if the operation succeeds.
+        :rtype: bool
+        """
+        try:
+            subprocess.run(
+                ["git", "push", branch],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                cwd=self.folder,
+            )
+        except subprocess.CalledProcessError as err:
+            GitPush.logger().error(err.stdout)
+            GitPush.logger().error(err.stderr)
+            raise GitPushFailed(self.folder)
+
+        return True
+
+    def push_all(self) -> bool:
+        """
+        Pushes all changes to a remote repository.
         :return: True if the operation succeeds.
         :rtype: bool
         """
