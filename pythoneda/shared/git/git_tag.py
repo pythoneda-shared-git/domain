@@ -18,6 +18,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from git import Repo
 import os
 from pythoneda import attribute, BaseObject
 from pythoneda.shared.git import GitTagFailed
@@ -46,6 +47,7 @@ class GitTag(BaseObject):
         """
         super().__init__()
         self._folder = folder
+        self._repo = Repo(folder)
 
     @property
     @attribute
@@ -57,27 +59,64 @@ class GitTag(BaseObject):
         """
         return self._folder
 
-    def create_tag(self, tag: str) -> bool:
+    @property
+    def repo(self):
+        """
+        Retrieves the GitPython repository.
+        :return: Such instance.
+        :rtype: git.Repo
+        """
+        return self._repo
+
+    def create_tag(self, tag: str, message:str="no message") -> bool:
         """
         Creates a tag in a local repository.
-        :param localRepo: The cloned repository.
-        :type localRepo: str
         :param tag: The tag to create.
         :type tag: str
+        :param message: A message.
+        :type message: str
         :return: True if the operation succeeds.
         :rtype: bool
+        :raise pythoneda.shared.git.GitTagFailed: If the tag fails.
         """
         try:
             subprocess.run(
-                ["git", "tag", tag],
+                ["git", "tag", "-m", message, tag],
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=False,
-                cwd=self._folder,
+                cwd=self.folder,
             )
         except subprocess.CalledProcessError as err:
             GitTag.logger().error(err.stdout)
             GitTag.logger().error(err.stderr)
             raise GitTagFailed(tag, self.folder)
+
         return True
+
+    def latest_tag(self) -> str:
+        """
+        Retrieves the latest tag.
+        :return: Such name.
+        :rtype: str
+        """
+        result = None
+        versions = []
+        for tag in self._repo.tags:
+            try:
+                version_info = semver.VersionInfo.parse(tag.name)
+                build = 0
+                match = re.search(r"\+build\.(\d+)", tag.name)
+                if match:
+                    build = int(match.group(1))
+
+                versions.append((version_info, build, tag.name))
+            except ValueError:
+                pass
+
+        if versions:
+            versions.sort(key=lambda v: (v[0], v[1]), reverse=True)
+            result = versions[0][2]
+
+        return result

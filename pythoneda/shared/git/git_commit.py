@@ -18,8 +18,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from .git_commit_failed import GitCommitFailed
+import os
 from pythoneda import attribute, BaseObject
 from git import Repo
+import subprocess
+
 
 class GitCommit(BaseObject):
     """
@@ -42,6 +46,7 @@ class GitCommit(BaseObject):
         """
         super().__init__()
         self._folder = folder
+        self._repo = Repo(self.folder)
 
     @property
     @attribute
@@ -53,12 +58,60 @@ class GitCommit(BaseObject):
         """
         return self._folder
 
-    def latest_commit(self) -> str:
+    @property
+    def repo(self):
         """
-        Retrieves the hash of the latest commit.
-        :return: The output of the operation, should it succeeds.
-        :rtype: str
+        Retrieves the GitPython repository.
+        :return: Such instance.
+        :rtype: git.Repo
         """
-        repo = Repo(self.folder)
+        return self._repo
 
-        return repo.head.commit.hexsha
+    def commit(self, message:str) -> str:
+        """
+        Commits staged changes.
+        :param message: The message.
+        :type message: str
+        :return: A tuple containing the hash and diff of the commit.
+        :rtype: tuple(str, str)
+        """
+        result = None
+
+        home_path = os.environ.get("HOME")
+
+        # Define custom Git settings
+        custom_env = {
+            "GIT_CONFIG_GLOBAL": os.path.join(home_path, ".gitconfig-UnveilingPartner"),
+            "GIT_CONFIG_NOSYSTEM": "true",
+            **dict(os.environ)  # Include existing environment variables
+        }
+
+        completed_process = subprocess.run(
+            [ "git", "commit", "-S", "-m", message],
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            cwd=self.folder,
+            env=custom_env
+        )
+
+        if completed_process.returncode == 0:
+            result = completed_process.stdout
+        else:
+            GitCommit.logger().error(completed_process.stderr)
+            raise GitCommitFailed(self.folder, completed_process.stdout)
+
+        return self.latest_commit()
+
+    def latest_commit(self):
+        """
+        Retrieves the hash and diff of the latest commit.
+        :return: A tuple containing the hash and diff of the latest commit.
+        :rtype: tuple(str, str)
+        """
+        latest_commit = self.repo.head.commit
+        latest_commit_hash = latest_commit.hexsha
+        latest_commit_diff = latest_commit.diff('HEAD~1')
+
+        return (latest_commit_hash, str(latest_commit_diff))

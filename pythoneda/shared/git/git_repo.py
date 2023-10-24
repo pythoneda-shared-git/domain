@@ -21,12 +21,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from git import Git, Repo
 import os
 from pythoneda import attribute, Entity
-from pythoneda.shared.git import ErrorCloningGitRepository, GitCheckoutFailed, GitProgressLogging, GitPush, GitTag, SshPrivateKeyGitPolicy, Version
+from pythoneda.shared.git import (
+    ErrorCloningGitRepository,
+    GitCheckoutFailed,
+    GitProgressLogging,
+    GitPush,
+    GitTag,
+    SshPrivateKeyGitPolicy,
+    Version,
+)
 import re
 import semver
 import subprocess
 from urllib.parse import urlparse
 from typing import Dict, List
+
 
 class GitRepo(Entity):
     """
@@ -41,19 +50,23 @@ class GitRepo(Entity):
         - None
     """
 
-    def __init__(self, url: str, rev: str, folder:str=None):
+    def __init__(self, url: str, rev: str, folder: str = None, repo=None):
         """
         Creates a new Git repository instance.
         :param url: The url of the repository.
         :type url: str
         :param rev: The revision.
         :type rev: str
+        :param folder: The cloned folder.
+        :type folder: str
+        :param repo: The underlying repository.
+        :type repo: git.Repo
         """
         super().__init__()
         self._url = url
         self._rev = rev
         self._folder = folder
-        self._repo = None
+        self._repo = repo
 
     @property
     @attribute
@@ -85,8 +98,18 @@ class GitRepo(Entity):
         """
         return self._folder
 
+    @property
+    @attribute
+    def repo(self) -> Repo:
+        """
+        Retrieves the repo instance.
+        :return: Such instance.
+        :rtype: git.Repo
+        """
+        return self._repo
+
     @classmethod
-    def from_folder(cls, folder:str):
+    def from_folder(cls, folder: str):
         """
         Creates a GitRepo from given folder.
         :param folder: The cloned repository.
@@ -99,10 +122,10 @@ class GitRepo(Entity):
         repo = Repo(folder)
 
         if repo.active_branch and repo.active_branch.tracking_branch():
-            remote = repo.active_branch.tracking_branch().remote_name
-            branch = repo.active_branch.tracking_branch().name.split('/')[-1]
-            url = repo.config_reader().get_value("remote", remote, "url")
-            result = GitRepo(url, branch, folder)
+            remote_name = repo.active_branch.tracking_branch().remote_name
+            branch = repo.active_branch.tracking_branch().name.split("/")[-1]
+            remote = repo.remote(remote_name)
+            result = GitRepo(remote.url, branch, folder, repo)
 
         return result
 
@@ -112,26 +135,7 @@ class GitRepo(Entity):
         :return: Such name.
         :rtype: str
         """
-        result = None
-        if self._repo is not None:
-            versions = []
-            for tag in self._repo.tags:
-                try:
-                    version_info = semver.VersionInfo.parse(tag.name)
-                    build = 0
-                    match = re.search(r"\+build\.(\d+)", tag.name)
-                    if match:
-                        build = int(match.group(1))
-
-                    versions.append((version_info, build, tag.name))
-                except ValueError:
-                    pass
-
-            if versions:
-                versions.sort(key=lambda v: (v[0], v[1]), reverse=True)
-                result = versions[0][2]
-
-        return result
+        return GitTag(self.folder).latest_tag()
 
     @classmethod
     def url_is_a_git_repo(cls, url: str) -> bool:
@@ -161,7 +165,11 @@ class GitRepo(Entity):
         """
         result = False
         try:
-            output = subprocess.run(["git", "ls-remote", "--tags", url, tag], stdout=subprocess.PIPE, text=True)
+            output = subprocess.run(
+                ["git", "ls-remote", "--tags", url, tag],
+                stdout=subprocess.PIPE,
+                text=True,
+            )
             result = not (output.stdout is None) and (len(output.stdout) > 0)
         except subprocess.CalledProcessError:
             pass
@@ -212,7 +220,9 @@ class GitRepo(Entity):
 
         return output.splitlines()[-1]
 
-    def clone(self, sshUsername: str, privateKeyFile: str, privateKeyPassphrase: str) -> Repo:
+    def clone(
+        self, sshUsername: str, privateKeyFile: str, privateKeyPassphrase: str
+    ) -> Repo:
         """
         Clones this repo in given folder.
         :param sshUsername: The SSH username.
@@ -226,7 +236,7 @@ class GitRepo(Entity):
         """
         raise NotImplementedError()
 
-    def raw_clone(self, folder: str, subfolder:str=None) -> Repo:
+    def raw_clone(self, folder: str, subfolder: str = None) -> Repo:
         """
         Clones this repo in given folder.
         :param folder: The base folder of the cloned repository.
@@ -303,63 +313,98 @@ class GitRepo(Entity):
         parsed_url = urlparse(self.url)
         return parsed_url.netloc == "github.com"
 
-    def tag_version(self, version: Version):
+    def tag_version(self, version:Version):
         """
-        Tags the repository with a new version, and pushes the tag.
-        :param version: The new version.
-        :type version: Version
+        Tags given version.
+        :param version: The version.
+        :type version: pythoneda.shared.git.Version
+        :raise pythoneda.shared.git.GitTagFailed: If the tag fails.
         """
-        GitTag(self._folder).create_tag(version.value)
-        GitPush(self._folder).push_tags()
+        GitTag(self.folder).create_tag(version.value)
 
-    def increase_major(self) -> Version:
+    def increase_major(self, tag: bool = False) -> Version:
         """
         Creates a new tag increasing the major in current version.
+        :param tag: Whether to tag automatically or not.
+        :type tag: bool
         :return: The new version.
         :rtype: pythoneda.shared.git.Version
         """
-        version = Version(self.latest_tag()).increase_major()
-        self.tag_version(version)
+        latest_tag = self.latest_tag()
+        if latest_tag is None:
+            version = Version("0.0.0")
+        else:
+            version = Version(latest_tag).increase_major()
+        if tag:
+            self.tag_version(version)
         return version
 
-    def increase_minor(self) -> Version:
+    def increase_minor(self, tag: bool = False) -> Version:
         """
         Creates a new tag increasing the minor in current version.
+        :param tag: Whether to tag automatically or not.
+        :type tag: bool
         :return: The new version.
         :rtype: pythoneda.shared.git.Version
         """
-        version = Version(self.latest_tag()).increase_minor()
-        self.tag_version(version)
+        latest_tag = self.latest_tag()
+        if latest_tag is None:
+            version = Version("0.0.0")
+        else:
+            version = Version(latest_tag).increase_minor()
+        if tag:
+            self.tag_version(version)
         return version
 
-    def increase_patch(self) -> Version:
+    def increase_patch(self, tag: bool = False) -> Version:
         """
         Creates a new tag increasing the patch in current version.
+        :param tag: Whether to tag automatically or not.
+        :type tag: bool
         :return: The new version.
         :rtype: pythoneda.shared.git.Version
         """
-        version = Version(self.latest_tag()).increase_patch()
-        self.tag_version(version)
+        latest_tag = self.latest_tag()
+        if latest_tag is None:
+            version = Version("0.0.0")
+        else:
+            version = Version(latest_tag).increase_patch()
+        if tag:
+            self.tag_version(version)
         return version
 
-    def increase_prerelease(self) -> Version:
+    def increase_prerelease(self, tag: bool = False) -> Version:
         """
         Creates a new tag increasing the prerelease in current version.
+        :param tag: Whether to tag automatically or not.
+        :type tag: bool
         :return: The new version.
         :rtype: pythoneda.shared.git.Version
         """
-        version = Version(self.latest_tag()).increase_prerelease()
-        self.tag_version(version)
+        latest_tag = self.latest_tag()
+        if latest_tag is None:
+            version = Version("0.0.0")
+        else:
+            version = Version(latest_tag).increase_prerelease()
+        if tag:
+            self.tag_version(version)
         return version
 
-    def increase_build(self) -> Version:
+    def increase_build(self, tag: bool = False) -> Version:
         """
         Creates a new tag increasing the build in current version.
+        :param tag: Whether to tag automatically or not.
+        :type tag: bool
         :return: The new version.
         :rtype: pythoneda.shared.git.Version
         """
-        version = Version(self.latest_tag()).increase_build()
-        self.tag_version(version)
+        latest_tag = self.latest_tag()
+        if latest_tag is None:
+            version = Version("0.0.0")
+        else:
+            version = Version(latest_tag).increase_build()
+        if tag:
+            self.tag_version(version)
         return version
 
     @classmethod
