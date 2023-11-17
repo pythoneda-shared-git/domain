@@ -1,7 +1,7 @@
 """
-pythoneda/shared/git/git_push_failed.py
+pythoneda/shared/git/git_push_branch_failed.py
 
-This file defines the GitPushFailed exception class.
+This file defines the GitPushBranchFailed exception class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
@@ -20,23 +20,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 
-class GitPushFailed(Exception):
+class GitPushBranchFailed(Exception):
     """
-    Running git push failed.
+    Running git push [branch] failed.
 
-    Class name: GitPushFailed
+    Class name: GitPushBranchFailed
 
     Responsibilities:
-        - Represent the error when running git push.
+        - Represent the error when running git push [branch].
 
     Collaborators:
         - None
     """
 
-    def __init__(self, folder: str):
+    def __init__(self, folder: str, branch: str):
         """
-        Creates a new GitPushFailed instance.
+        Creates a new GitPushBranch instance.
         :param folder: The folder with the cloned repository.
         :type folder: str
+        :param branch: The branch.
+        :type branch: str
         """
-        super().__init__(f'"git push" in folder {folder} failed')
+        super().__init__(f'"git push {branch}" in folder {folder} failed')

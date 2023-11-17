@@ -18,11 +18,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda import attribute, BaseObject
-from pythoneda.shared.git import GitApplyFailed
-import subprocess
+from .git_apply_failed import GitApplyFailed
+from .git_operation import GitOperation
 
-class GitApply(BaseObject):
+
+class GitApply(GitOperation):
     """
     Provides git apply operations.
 
@@ -41,20 +41,9 @@ class GitApply(BaseObject):
         :param folder: The cloned repository.
         :type folder: str
         """
-        super().__init__()
-        self._folder = folder
+        super().__init__(folder)
 
-    @property
-    @attribute
-    def folder(self) -> str:
-        """
-        Retrieves the folder of the cloned repository.
-        :return: Such folder.
-        :rtype: str
-        """
-        return self._folder
-
-    def apply(self, patchFile:str) -> str:
+    def apply(self, patchFile: str) -> str:
         """
         Applies the changes.
         :param patchFile: The location of the patch file to apply.
@@ -64,19 +53,11 @@ class GitApply(BaseObject):
         """
         result = None
 
-        try:
-            execution = subprocess.run(
-                [ "git", "apply", patchFile ],
-                check=True,
-                capture_output=True,
-                text=True,
-                cwd=self.folder,
-            )
+        (code, stdout, stderr) = self.run(["git", "apply", patchFile])
+        if code == 0:
             result = execution.stdout
-        except subprocess.CalledProcessError as err:
-            GitApply.logger().error(err)
-            GitApply.logger().debug(err.stdout)
-            GitApply.logger().debug(err.stderr)
+        else:
+            GitApply.logger().debug(stderr)
             raise GitApplyFailed(self.folder)
 
         return result
@@ -89,17 +70,11 @@ class GitApply(BaseObject):
         """
         result = None
 
-        try:
-            execution = subprocess.run(
-                [ "git", "apply", "--3way" ],
-                check=True,
-                capture_output=True,
-                text=True,
-                cwd=self.folder,
-            )
+        (code, stdout, stderr) = self.run(["git", "apply", "--3way"])
+        if code == 0:
             result = execution.stdout
-        except subprocess.CalledProcessError as err:
-            GitApply.logger().error(err)
+        else:
+            GitApply.logger().error(stderr)
             raise GitApplyFailed(self.folder)
 
         return result

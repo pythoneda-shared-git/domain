@@ -50,7 +50,7 @@ class GitRepo(Entity):
         - None
     """
 
-    def __init__(self, url: str, rev: str, folder: str = None, repo=None):
+    def __init__(self, url: str, rev: str = "main", folder: str = None, repo=None):
         """
         Creates a new Git repository instance.
         :param url: The url of the repository.
@@ -107,6 +107,17 @@ class GitRepo(Entity):
         :rtype: git.Repo
         """
         return self._repo
+
+    @property
+    def remote_url(self) -> str:
+        """
+        Retrieves the remote url of the current branch in the cloned folder.
+        :return: Such url.
+        :rtype: str
+        """
+        branch = self.repo.active_branch
+        remote_name = self.repo.git.config(f"branch.{branch.name}.remote")
+        return self.repo.remotes[remote_name].url
 
     @classmethod
     def from_folder(cls, folder: str):
@@ -192,14 +203,17 @@ class GitRepo(Entity):
         :return: The tuple (owner, repo).
         :rtype: tuple
         """
+        owner = None
+        repo_name = None
         pattern = r"(?:https?://)?(?:www\.)?.*\.com/([^/]+)/([^/]+)"
         try:
             match = re.match(pattern, url)
             owner, repo_name = match.groups()
-            return owner, repo_name
 
         except:
             GitRepo.logger().error(f"Invalid repo: {url}")
+
+        return owner, repo_name
 
     def sha256(self) -> str:
         """
@@ -313,7 +327,7 @@ class GitRepo(Entity):
         parsed_url = urlparse(self.url)
         return parsed_url.netloc == "github.com"
 
-    def tag_version(self, version:Version):
+    def tag_version(self, version: Version):
         """
         Tags given version.
         :param version: The version.

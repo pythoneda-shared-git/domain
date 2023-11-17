@@ -1,7 +1,7 @@
 """
-pythoneda/shared/git/git_push_failed.py
+pythoneda/shared/git/invalid_github_credentials.py
 
-This file defines the GitPushFailed exception class.
+This file defines the InvalidGithubCredentials exception class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
@@ -18,25 +18,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from pythoneda import BaseObject
 
 
-class GitPushFailed(Exception):
+class InvalidGithubCredentials(Exception, BaseObject):
     """
-    Running git push failed.
+    Access to Github API was denied.
 
-    Class name: GitPushFailed
+    Class name: InvalidGithubCredentials
 
     Responsibilities:
-        - Represent the error when running git push.
+        - Represent the error when access to to Github API was rejected.
 
     Collaborators:
         - None
     """
 
-    def __init__(self, folder: str):
+    def __init__(self, url: str):
         """
-        Creates a new GitPushFailed instance.
-        :param folder: The folder with the cloned repository.
-        :type folder: str
+        Creates a new InvalidGithubCredentials instance.
+        :param url: The url of the API.
+        :type url: str
         """
-        super().__init__(f'"git push" in folder {folder} failed')
+        super().__init__(f"Bad credentials accessing {url}")

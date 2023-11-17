@@ -18,13 +18,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from .git_operation import GitOperation
 from .git_stash_pop_failed import GitStashPopFailed
 from .git_stash_push_failed import GitStashPushFailed
-from pythoneda import attribute, BaseObject
 import re
-import subprocess
 
-class GitStash(BaseObject):
+
+class GitStash(GitOperation):
     """
     Provides git stash operations.
 
@@ -43,20 +43,9 @@ class GitStash(BaseObject):
         :param folder: The cloned repository.
         :type folder: str
         """
-        super().__init__()
-        self._folder = folder
+        super().__init__(folder)
 
-    @property
-    @attribute
-    def folder(self) -> str:
-        """
-        Retrieves the folder of the cloned repository.
-        :return: Such folder.
-        :rtype: str
-        """
-        return self._folder
-
-    def push(self, message:str=None) -> str:
+    def push(self, message: str = None) -> str:
         """
         Performs a git stash push.
         :param message: The message.
@@ -66,30 +55,25 @@ class GitStash(BaseObject):
         """
         result = None
 
-        args = [ "git", "stash", "push" ]
+        args = ["git", "stash", "push"]
         if message:
             args.extend(["-m", message])
-        try:
-            execution = subprocess.run(
-                args,
-                check=True,
-                capture_output=True,
-                text=True,
-                cwd=self.folder,
-            )
-            output = execution.stdout
-
+        (code, stdout, stderr) = self.run(args)
+        if code == 0:
             # Parse the output to get the stash identifier
-            match = re.search(r'Saved working directory and index state (\w+ on .+: [a-f0-9]+ .+)', output)
+            match = re.search(
+                r"Saved working directory and index state (\w+ on .+: [a-f0-9]+ .+)",
+                stdout,
+            )
             if match:
                 result = match.group(1)
-        except subprocess.CalledProcessError as err:
-            GitStash.logger().error(err)
+        else:
+            GitStash.logger().error(stderr)
             raise GitStashPushFailed(self.folder)
 
         return result
 
-    def pop(self, stashId:str) -> str:
+    def pop(self, stashId: str) -> str:
         """
         Performs a git stash pop for given id.
         :param stashId: The stash id.
@@ -99,17 +83,11 @@ class GitStash(BaseObject):
         """
         result = None
 
-        try:
-            execution = subprocess.run(
-                ["git", "stash", "pop", stashId],
-                check=True,
-                capture_output=True,
-                text=True,
-                cwd=self.folder,
-            )
+        (code, stdout, stderr) = self.run(["git", "stash", "pop", stashId])
+        if code == 0:
             result = execution.stdout
-        except subprocess.CalledProcessError as err:
-            GitStash.logger().error(err)
+        else:
+            GitStash.logger().error(stderr)
             raise GitStashPopFailed(self.folder)
 
         return result

@@ -1,7 +1,7 @@
 """
-pythoneda/shared/git/git_init.py
+pythoneda/shared/git/git_push_tags_failed.py
 
-This file declares the GitInit class.
+This file defines the GitPushTagsFailed exception class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
@@ -18,42 +18,25 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from .git_init_failed import GitInitFailed
-from .git_operation import GitOperation
 
 
-class GitInit(GitOperation):
+class GitPushTagsFailed(Exception):
     """
-    Provides git init operations.
+    Running git push --tags failed.
 
-    Class name: GitInit
+    Class name: GitPushTagsFailed
 
     Responsibilities:
-        - Provides "git init" operations.
+        - Represent the error when running git push --tags.
 
     Collaborators:
-        - pythoneda.shared.git.GitInitFailed: If the operation fails.
+        - None
     """
 
     def __init__(self, folder: str):
         """
-        Creates a new GitInit instance for given folder.
-        :param folder: The cloned repository.
+        Creates a new GitPushTags instance.
+        :param folder: The folder with the cloned repository.
         :type folder: str
         """
-        super().__init__(folder)
-
-    def init(self):
-        """
-        Runs git init.
-        """
-        result = None
-
-        (code, stdout, stderr) = self.run(["git", "init"])
-        if code == 0:
-            result = execution.stdout
-        else:
-            GitInit.logger().error(stderr)
-            raise GitInitFailed(self.folder)
-
-        return result
+        super().__init__(f'"git push --tags" in folder {folder} failed')

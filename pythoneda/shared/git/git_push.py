@@ -18,11 +18,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda import attribute, BaseObject
-from pythoneda.shared.git import GitPushFailed
-import subprocess
+from .git_operation import GitOperation
+from .git_push_branch_failed import GitPushBranchFailed
+from .git_push_failed import GitPushFailed
+from .git_push_tags_failed import GitPushTagsFailed
 
-class GitPush(BaseObject):
+
+class GitPush(GitOperation):
     """
     Provides git push operations.
 
@@ -41,20 +43,9 @@ class GitPush(BaseObject):
         :param folder: The cloned repository.
         :type folder: str
         """
-        super().__init__()
-        self._folder = folder
+        super().__init__(folder)
 
-    @property
-    @attribute
-    def folder(self) -> str:
-        """
-        Retrieves the folder of the cloned repository.
-        :return: Such folder.
-        :rtype: str
-        """
-        return self._folder
-
-    def push_branch(self, branch:str) -> bool:
+    def push_branch(self, branch: str) -> bool:
         """
         Pushes changes in a given branch to a remote repository.
         :param branch: The branch.
@@ -62,40 +53,22 @@ class GitPush(BaseObject):
         :return: True if the operation succeeds.
         :rtype: bool
         """
-        try:
-            subprocess.run(
-                ["git", "push", branch],
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                cwd=self.folder,
-            )
-        except subprocess.CalledProcessError as err:
-            GitPush.logger().error(err.stdout)
-            GitPush.logger().error(err.stderr)
-            raise GitPushFailed(self.folder)
+        (code, stdout, stderr) = self.run(["git", "push", branch])
+        if code != 0:
+            GitPush.logger().error(stderr)
+            raise GitPushBranchFailed(self.folder, branch)
 
         return True
 
-    def push_all(self) -> bool:
+    def push(self) -> bool:
         """
-        Pushes all changes to a remote repository.
+        Pushes changes in all branches to a remote repository.
         :return: True if the operation succeeds.
         :rtype: bool
         """
-        try:
-            subprocess.run(
-                ["git", "push"],
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                cwd=self.folder,
-            )
-        except subprocess.CalledProcessError as err:
-            GitPush.logger().error(err.stdout)
-            GitPush.logger().error(err.stderr)
+        (code, stdout, stderr) = self.run(["git", "push"])
+        if code != 0:
+            GitPush.logger().error(stderr)
             raise GitPushFailed(self.folder)
 
         return True
@@ -106,18 +79,9 @@ class GitPush(BaseObject):
         :return: True if the operation succeeds.
         :rtype: bool
         """
-        try:
-            subprocess.run(
-                ["git", "push", "--tags"],
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                cwd=self.folder,
-            )
-        except subprocess.CalledProcessError as err:
-            GitPush.logger().error(err.stdout)
-            GitPush.logger().error(err.stderr)
-            raise GitPushFailed(self.folder)
+        (code, stdout, stderr) = self.run(["git", "push", "--tags"])
+        if code != 0:
+            GitPush.logger().error(stderr)
+            raise GitPushTagsFailed(self.folder)
 
         return True

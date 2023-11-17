@@ -18,16 +18,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from git import Repo
-import os
-from pythoneda import attribute, BaseObject
-from pythoneda.shared.git import GitTagFailed
+from .git_operation import GitOperation
+from .git_tag_failed import GitTagFailed
+from .invalid_github_credentials import InvalidGithubCredentials
+from packaging import version
 import re
+import requests
 import semver
-import subprocess
-from typing import Dict
 
-class GitTag(BaseObject):
+
+class GitTag(GitOperation):
     """
     Provides git operations related to tags.
 
@@ -39,36 +39,16 @@ class GitTag(BaseObject):
     Collaborators:
         - None
     """
+
     def __init__(self, folder: str):
         """
         Creates a new GitTag instance for given folder.
         :param folder: The cloned repository.
         :type folder: str
         """
-        super().__init__()
-        self._folder = folder
-        self._repo = Repo(folder)
+        super().__init__(folder)
 
-    @property
-    @attribute
-    def folder(self) -> str:
-        """
-        Retrieves the folder of the cloned repository.
-        :return: Such folder.
-        :rtype: str
-        """
-        return self._folder
-
-    @property
-    def repo(self):
-        """
-        Retrieves the GitPython repository.
-        :return: Such instance.
-        :rtype: git.Repo
-        """
-        return self._repo
-
-    def create_tag(self, tag: str, message:str="no message") -> bool:
+    def create_tag(self, tag: str, message: str = "no message") -> bool:
         """
         Creates a tag in a local repository.
         :param tag: The tag to create.
@@ -79,18 +59,9 @@ class GitTag(BaseObject):
         :rtype: bool
         :raise pythoneda.shared.git.GitTagFailed: If the tag fails.
         """
-        try:
-            subprocess.run(
-                ["git", "tag", "-m", message, tag],
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=False,
-                cwd=self.folder,
-            )
-        except subprocess.CalledProcessError as err:
-            GitTag.logger().error(err.stdout)
-            GitTag.logger().error(err.stderr)
+        (code, stdout, stderr) = self.run(["git", "tag", "-m", message, tag])
+        if code != 0:
+            GitTag.logger().error(stderr)
             raise GitTagFailed(tag, self.folder)
 
         return True
@@ -103,7 +74,7 @@ class GitTag(BaseObject):
         """
         result = None
         versions = []
-        for tag in self._repo.tags:
+        for tag in self.repo.tags:
             try:
                 version_info = semver.VersionInfo.parse(tag.name)
                 build = 0
@@ -118,5 +89,109 @@ class GitTag(BaseObject):
         if versions:
             versions.sort(key=lambda v: (v[0], v[1]), reverse=True)
             result = versions[0][2]
+
+        return result
+
+    def current_tag(self) -> str:
+        """
+        Retrieves the current tag, i.e., the most recent tag pointing to the
+        same commit as HEAD.
+        :return: The current tag.
+        :rtype: str
+        """
+        result = None
+
+        # Get the commit object for HEAD
+        head_commit = self.repo.head.commit
+
+        # Initialize variables to keep track of the most recent tag and its commit date
+        most_recent_date = None
+
+        # Iterate through the tags
+        for tag_ref in self.repo.tags:
+            # Get the commit object for the tag
+            tag_commit = tag_ref.commit
+
+            # Check if the tag points to the same commit as HEAD
+            if tag_commit == head_commit and self.is_valid_version(tag_ref.name):
+                # Update the most recent tag and date if this tag is more recent
+                if (
+                    most_recent_date is None
+                    or tag_commit.committed_datetime > most_recent_date
+                ):
+                    result = tag_ref.name
+                    most_recent_date = tag_commit.committed_datetime
+
+        return result
+
+    def is_valid_version(self, tag: str) -> bool:
+        """
+        Checks if given tag is a valid version according to semantic versioning.
+        :param tag: The tag to check.
+        :type tag: str
+        :return: True if it's a valid version.
+        :rtype: bool
+        """
+        result = False
+        try:
+            semver.parse(tag)
+            result = True
+        except ValueError:
+            result = False
+
+        return result
+
+    @classmethod
+    def latest_github_tag(cls, token: str, owner: str, repo: str, hash: str) -> str:
+        """
+        Retrieves the highest github tag pointing to given hash.
+        :param token: The github token.
+        :type token: str
+        :param owner: The repository owner.
+        :type owner: str
+        :param repo: The repository name.
+        :type repo: str
+        :param hash: The commit hash.
+        :type hash: str
+        :return: The highest tag pointing to given commit, or None if none found.
+        :rtype: Union(str,None)
+        """
+        result = None
+        # GitHub API URL for tags
+        url = f"https://api.github.com/repos/{owner}/{repo}/tags"
+
+        # Headers for authentication
+        headers = {"Authorization": f"token {token}"}
+
+        # Fetch the tags
+        response = requests.get(url, headers=headers)
+        tags = response.json()
+
+        if (
+            isinstance(tags, dict)
+            and tagstags.get("message", None) == "Bad credentials"
+        ):
+            GitTag.logger().error("Invalid credentials")
+            raise InvalidGithubCredentials(url)
+
+        # Filter tags pointing to the commit
+        commit_tags = [tag for tag in tags if tag["commit"]["sha"] == hash]
+
+        # Parse versions and sort them
+        valid_versions = []
+        for tag in commit_tags:
+            try:
+                # Append the parsed version
+                valid_versions.append(version.parse(tag["name"]))
+            except version.InvalidVersion:
+                # Ignore invalid semantic versions
+                pass
+
+        # Sort versions
+        valid_versions.sort()
+
+        # Highest version
+        if valid_versions:
+            result = valid_versions[-1]
 
         return result

@@ -18,11 +18,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda import attribute, BaseObject
-from pythoneda.shared.git import GitDiffFailed
-import subprocess
+from .git_diff_failed import GitDiffFailed
+from .git_operation import GitOperation
 
-class GitDiff(BaseObject):
+
+class GitDiff(GitOperation):
     """
     Provides git diff operations.
 
@@ -41,18 +41,7 @@ class GitDiff(BaseObject):
         :param folder: The cloned repository.
         :type folder: str
         """
-        super().__init__()
-        self._folder = folder
-
-    @property
-    @attribute
-    def folder(self) -> str:
-        """
-        Retrieves the folder of the cloned repository.
-        :return: Such folder.
-        :rtype: str
-        """
-        return self._folder
+        super().__init__(folder)
 
     def diff(self) -> str:
         """
@@ -62,17 +51,11 @@ class GitDiff(BaseObject):
         """
         result = None
 
-        try:
-            execution = subprocess.run(
-                [ "git", "-C", self.folder, "diff"],
-                check=True,
-                capture_output=True,
-                text=True,
-                cwd=self.folder,
-            )
-            result = execution.stdout
-        except subprocess.CalledProcessError as err:
-            GitDiff.logger().error(err)
+        (code, stdout, stderr) = self.run(["git", "diff"])
+        if code == 0:
+            result = stdout
+        else:
+            GitDiff.logger().error(stderr)
             raise GitDiffFailed(self.folder)
 
         return result
@@ -85,17 +68,11 @@ class GitDiff(BaseObject):
         """
         result = None
 
-        try:
-            execution = subprocess.run(
-                [ "git", "-C", self.folder, "diff", "HEAD^", "HEAD"],
-                check=True,
-                capture_output=True,
-                text=True,
-                cwd=self.folder,
-            )
-            result = execution.stdout
-        except subprocess.CalledProcessError as err:
-            GitDiff.logger().error(err)
+        (code, stdout, stderr) = self.run(["git", "diff", "HEAD^", "HEAD"])
+        if code == 0:
+            result = stdout
+        else:
+            GitDiff.logger().error(stderr)
             raise GitDiffFailed(self.folder)
 
         return result

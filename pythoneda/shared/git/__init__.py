@@ -18,7 +18,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-__path__ = __import__('pkgutil').extend_path(__path__, __name__)
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from .error_cloning_git_repository import ErrorCloningGitRepository
 from .git_add_failed import GitAddFailed
@@ -27,10 +27,14 @@ from .git_apply_failed import GitApplyFailed
 from .git_checkout_failed import GitCheckoutFailed
 from .git_diff_failed import GitDiffFailed
 from .git_init_failed import GitInitFailed
+from .git_push_branch_failed import GitPushBranchFailed
 from .git_push_failed import GitPushFailed
+from .git_push_tags_failed import GitPushTagsFailed
 from .git_stash_pop_failed import GitStashPopFailed
 from .git_stash_push_failed import GitStashPushFailed
 from .git_tag_failed import GitTagFailed
+
+from .git_operation import GitOperation
 from .git_add import GitAdd
 from .git_apply import GitApply
 from .git_diff import GitDiff
