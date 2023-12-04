@@ -25,6 +25,8 @@ from .git_add_failed import GitAddFailed
 from .git_add_all_failed import GitAddAllFailed
 from .git_apply_failed import GitApplyFailed
 from .git_checkout_failed import GitCheckoutFailed
+from .git_check_attr_all_failed import GitCheckAttrAllFailed
+from .git_check_attr_failed import GitCheckAttrFailed
 from .git_diff_failed import GitDiffFailed
 from .git_init_failed import GitInitFailed
 from .git_push_branch_failed import GitPushBranchFailed
@@ -37,6 +39,7 @@ from .git_tag_failed import GitTagFailed
 from .git_operation import GitOperation
 from .git_add import GitAdd
 from .git_apply import GitApply
+from .git_check_attr import GitCheckAttr
 from .git_diff import GitDiff
 from .git_init import GitInit
 from .git_progress_logging import GitProgressLogging
