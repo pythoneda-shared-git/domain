@@ -48,8 +48,8 @@ class GitCommit(GitOperation):
         Commits staged changes.
         :param message: The message.
         :type message: str
-        :return: A tuple containing the hash and diff of the commit.
-        :rtype: tuple(str, str)
+        :return: A tuple containing the hash, the diff and the message of the latest commit.
+        :rtype: tuple(str, str, str)
         """
         (code, stdout, stderr) = self.run(["git", "commit", "-S", "-m", message])
         if code != 0:
@@ -63,12 +63,13 @@ class GitCommit(GitOperation):
 
     def latest_commit(self):
         """
-        Retrieves the hash and diff of the latest commit.
-        :return: A tuple containing the hash and diff of the latest commit.
-        :rtype: tuple(str, str)
+        Retrieves the hash, the diff and the message of the latest commit.
+        :return: A tuple containing the hash, the diff and the message of the latest commit.
+        :rtype: tuple(str, str, str)
         """
         latest_commit = self.repo.head.commit
         latest_commit_hash = latest_commit.hexsha
         latest_commit_diff = latest_commit.diff("HEAD~1")
+        latest_commit_message = latest_commit.message
 
-        return (latest_commit_hash, str(latest_commit_diff))
+        return (latest_commit_hash, str(latest_commit_diff), latest_commit_message)
