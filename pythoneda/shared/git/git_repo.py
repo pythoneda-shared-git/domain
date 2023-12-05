@@ -205,13 +205,17 @@ class GitRepo(Entity):
         """
         owner = None
         repo_name = None
-        pattern = r"(?:https?://)?(?:www\.)?.*\.com/([^/]+)/([^/]+)"
         try:
-            match = re.match(pattern, url)
-            owner, repo_name = match.groups()
-
+            owner, repo_name = re.match(
+                r"(?:https?://)?(?:www\.)?.*\.com/([^/]+)/([^/]+)", url
+            ).groups()
         except:
-            GitRepo.logger().error(f"Invalid repo: {url}")
+            try:
+                owner, repo_name, _ = re.match(
+                    r"github:([^/]+)?/([^/]+)?/(.*)?", url
+                ).groups()
+            except Exception as err:
+                GitRepo.logger().error(f"Invalid repo: {url}, {err}")
 
         return owner, repo_name
 

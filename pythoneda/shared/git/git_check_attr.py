@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from .git_check_attr_all_failed import GitCheckAttrAllFailed
 from .git_check_attr_failed import GitCheckAttrFailed
 from .git_operation import GitOperation
+from typing import Dict
 
 
 class GitCheckAttr(GitOperation):
