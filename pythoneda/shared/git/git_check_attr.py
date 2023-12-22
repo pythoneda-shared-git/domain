@@ -73,7 +73,7 @@ class GitCheckAttr(GitOperation):
         result = None
 
         (code, stdout, stderr) = self.run(["git", "check-attr", "-a", file])
-        GitAdd.logger().debug(f"git check-attr -a {file} -> {code}")
+        GitCheckAttr.logger().debug(f"git check-attr -a {file} -> {code}")
         if code == 0:
             result = self._extract_attributes[stdout]
         else:
@@ -98,7 +98,7 @@ class GitCheckAttr(GitOperation):
         result = None
 
         (code, stdout, stderr) = self.run(["git", "check-attr", attr, file])
-        GitAdd.logger().debug(f"git check-attr {attr} {file} -> {code}")
+        GitCheckAttr.logger().debug(f"git check-attr {attr} {file} -> {code}")
         if code == 0:
             result = self._extract_attributes(stdout).get(attr, None)
 
