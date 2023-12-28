@@ -85,7 +85,7 @@ class GitStash(GitOperation):
 
         (code, stdout, stderr) = self.run(["git", "stash", "pop", stashId])
         if code == 0:
-            result = execution.stdout
+            result = stdout
         else:
             GitStash.logger().error(stderr)
             raise GitStashPopFailed(self.folder)

@@ -51,9 +51,9 @@ class GitInit(GitOperation):
 
         (code, stdout, stderr) = self.run(["git", "init"])
         if code == 0:
-            result = execution.stdout
+            result = stdout
         else:
             GitInit.logger().error(stderr)
-            raise GitInitFailed(self.folder)
+            raise GitInitFailed(self.folder, stderr)
 
         return result

@@ -45,7 +45,8 @@ class GitCheckAttr(GitOperation):
         """
         super().__init__(folder)
 
-    def _extract_attributes(self, output: str) -> Dict[str, str]:
+    @staticmethod
+    def _extract_attributes(output: str) -> Dict[str, str]:
         """
         Parses the output of `git check-attr`.
         :param output: The output.
@@ -62,20 +63,20 @@ class GitCheckAttr(GitOperation):
 
         return result
 
-    def check_attr_all(self, file: str) -> str:
+    def check_attr_all(self, file: str) -> Dict[str, str]:
         """
         Retrieves all attributes of given file.
         :param file: The file to inspect.
         :type file: str
         :return: A dictionary with the attribute names and values.
-        :rtype: str
+        :rtype: Dict[str, str]
         """
         result = None
 
         (code, stdout, stderr) = self.run(["git", "check-attr", "-a", file])
         GitCheckAttr.logger().debug(f"git check-attr -a {file} -> {code}")
         if code == 0:
-            result = self._extract_attributes[stdout]
+            result = self._extract_attributes(stdout)
         else:
             if stderr != "":
                 GitCheckAttr.logger().error(stderr)
@@ -98,7 +99,6 @@ class GitCheckAttr(GitOperation):
         result = None
 
         (code, stdout, stderr) = self.run(["git", "check-attr", attr, file])
-        GitCheckAttr.logger().debug(f"git check-attr {attr} {file} -> {code}")
         if code == 0:
             result = self._extract_attributes(stdout).get(attr, None)
 
@@ -108,5 +108,6 @@ class GitCheckAttr(GitOperation):
             if stdout != "":
                 GitCheckAttr.logger().error(stdout)
             raise GitCheckAttrFailed(self.folder, attr, file, stderr)
+        GitCheckAttr.logger().debug(f"git check-attr {attr} {file} -> {result}")
 
         return result

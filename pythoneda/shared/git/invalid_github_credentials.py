@@ -23,12 +23,12 @@ from pythoneda import BaseObject
 
 class InvalidGithubCredentials(Exception, BaseObject):
     """
-    Access to Github API was denied.
+    Access to GitHub API was denied.
 
     Class name: InvalidGithubCredentials
 
     Responsibilities:
-        - Represent the error when access to to Github API was rejected.
+        - Represent the error when access to GitHub API was rejected.
 
     Collaborators:
         - None

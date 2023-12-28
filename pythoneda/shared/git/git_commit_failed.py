@@ -34,7 +34,7 @@ class GitCommitFailed(Exception, BaseObject):
         - None
     """
 
-    def __init__(self, folder: str, message:str):
+    def __init__(self, folder: str, message: str):
         """
         Creates a new instance.
         :param folder: The folder with the cloned repository.

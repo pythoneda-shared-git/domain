@@ -52,10 +52,9 @@ class GitApply(GitOperation):
         :rtype: str
         """
         result = None
-
         (code, stdout, stderr) = self.run(["git", "apply", patchFile])
         if code == 0:
-            result = execution.stdout
+            result = stdout
         else:
             GitApply.logger().debug(stderr)
             raise GitApplyFailed(self.folder)
@@ -69,10 +68,9 @@ class GitApply(GitOperation):
         :rtype: str
         """
         result = None
-
         (code, stdout, stderr) = self.run(["git", "apply", "--3way"])
         if code == 0:
-            result = execution.stdout
+            result = stdout
         else:
             GitApply.logger().error(stderr)
             raise GitApplyFailed(self.folder)

@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import BaseObject
 
+
 class GitAddFailed(Exception, BaseObject):
     """
     Adding a file to the git repository failed.
@@ -33,7 +34,7 @@ class GitAddFailed(Exception, BaseObject):
         - None
     """
 
-    def __init__(self, folder:str, file:str, output:str):
+    def __init__(self, folder: str, file: str, output: str):
         """
         Creates a new GitAddFailed instance.
         :param folder: The repository folder.

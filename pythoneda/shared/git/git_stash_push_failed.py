@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import BaseObject
 
+
 class GitStashPushFailed(Exception, BaseObject):
     """
     Running git stash push failed.

@@ -72,4 +72,4 @@ class GitCommit(GitOperation):
         latest_commit_diff = latest_commit.diff("HEAD~1")
         latest_commit_message = latest_commit.message
 
-        return (latest_commit_hash, str(latest_commit_diff), latest_commit_message)
+        return latest_commit_hash, str(latest_commit_diff), latest_commit_message

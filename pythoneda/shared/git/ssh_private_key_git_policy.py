@@ -18,10 +18,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import os
 import paramiko
 from pythoneda import attribute, sensitive, ValueObject
 from typing import Dict
+
 
 class SshPrivateKeyGitPolicy(ValueObject):
     """
@@ -47,7 +47,7 @@ class SshPrivateKeyGitPolicy(ValueObject):
         """
         super().__init__()
         self._username = username
-        self._private_key = privateKey
+        self._private_key_file = privateKeyFile
         self._passphrase = passphrase
 
     @property
@@ -63,13 +63,13 @@ class SshPrivateKeyGitPolicy(ValueObject):
     @property
     @attribute
     @sensitive
-    def private_key(self) -> str:
+    def private_key_file(self) -> str:
         """
         Retrieves the path of the private key file.
         :return: Such path.
         :rtype: str
         """
-        return self._private_key
+        return self._private_key_file
 
     @property
     @attribute

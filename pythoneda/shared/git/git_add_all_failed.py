@@ -34,7 +34,7 @@ class GitAddAllFailed(Exception, BaseObject):
         - None
     """
 
-    def __init__(self, folder:str, output:str):
+    def __init__(self, folder: str, output: str):
         """
         Creates a new GitAddAllFailed instance.
         :param folder: The repository folder.

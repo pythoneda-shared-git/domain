@@ -19,18 +19,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import atexit
-from dulwich.repo import Repo
-from dulwich.client import get_transport_and_path
-from dulwich.protocol import Protocol, ZERO_SHA
 from git import Repo
 import os
-from paramiko import RSAKey, AutoAddPolicy
-from paramiko.client import SSHClient
-from paramiko.agent import AgentRequestHandler, AgentServerProxy
 from pythoneda import attribute, sensitive
-from pythoneda.shared.git import GitRepo, SshVendor
+from pythoneda.shared.git import GitRepo
 import shutil
 import tempfile
+
 
 class SshGitRepo(GitRepo):
     """
@@ -46,7 +41,14 @@ class SshGitRepo(GitRepo):
         - GitRepo: To provide support for git operations.
     """
 
-    def __init__(self, url: str, rev: str, sshUsername: str, privateKeyFile: str, privateKeyPassphrase: str):
+    def __init__(
+        self,
+        url: str,
+        rev: str,
+        sshUsername: str,
+        privateKeyFile: str,
+        privateKeyPassphrase: str,
+    ):
         """
         Creates a new Git repository instance.
         :param url: The url of the repository.
@@ -62,9 +64,9 @@ class SshGitRepo(GitRepo):
         """
         super().__init__(url, rev)
         self._ssh_username = sshUsername
-#        self._private_key_file = privateKeyFile
+        #        self._private_key_file = privateKeyFile
         self._private_key_file = "/home/chous/.ssh/id_rsa-unveilingpartner.pub"
-#        self._private_key_passphrase = privateKeyPassphrase
+        #        self._private_key_passphrase = privateKeyPassphrase
         self._private_key_passphrase = ""
 
     @property
@@ -72,14 +74,14 @@ class SshGitRepo(GitRepo):
     @sensitive
     def ssh_username(self) -> str:
         """
-        Retrieves the SSH user name.
-        :return: Such user name.
+        Retrieves the SSH username.
+        :return: Such username.
         :rtype: str
         """
         return self._ssh_username
 
     @property
-#    @attribute
+    #    @attribute
     def private_key_file(self) -> str:
         """
         Retrieves the location of the private key.
@@ -90,7 +92,7 @@ class SshGitRepo(GitRepo):
 
     @property
     @attribute
-#    @sensitive
+    #    @sensitive
     def private_key_passphrase(self) -> str:
         """
         Retrieves the private key passphrase.
@@ -99,21 +101,33 @@ class SshGitRepo(GitRepo):
         """
         return self._private_key_passphrase
 
+    def ssh_clone(self) -> Repo:
+        return self.clone(
+            self.ssh_username, self.private_key_file, self.private_key_passphrase
+        )
 
-    def clone(self) -> Repo:
+    def clone(
+        self, sshUsername: str, privateKeyFile: str, privateKeyPassphrase: str
+    ) -> Repo:
         """
-        Clones this repo via SSH.
+        Clones this repo in given folder.
+        :param sshUsername: The SSH username.
+        :type sshUsername: str
+        :param privateKeyFile: The private key for SSH authentication.
+        :type privateKeyFile: str
+        :param privateKeyPassphrase: The passphrase of the private key.
+        :type privateKeyPassphrase: str
         :return: A git.Repo instance.
         :rtype: git.Repo
         """
-#        vendor = SshVendor(self.ssh_username, self.private_key_file, self.private_key_passphrase)
-#        client, path = get_transport_and_path(self.url, ssh_vendor=vendor)
+        #        vendor = SshVendor(self.ssh_username, self.private_key_file, self.private_key_passphrase)
+        #        client, path = get_transport_and_path(self.url, ssh_vendor=vendor)
         self._folder = tempfile.TemporaryDirectory().name
         add_folder_to_cleanup(self._folder)
 
-        ssh_cmd = f'ssh -i {self.private_key_file} -o StrictHostKeyChecking=no'
+        ssh_cmd = f"ssh -i {privateKeyFile} -o StrictHostKeyChecking=no"
 
-        os.environ['GIT_SSH_COMMAND'] = ssh_cmd
+        os.environ["GIT_SSH_COMMAND"] = ssh_cmd
         result = Repo.clone_from(self.url, self._folder)
         self._repo = result
         return result
@@ -121,13 +135,15 @@ class SshGitRepo(GitRepo):
 
 _folders_to_cleanup = []
 
+
 def add_folder_to_cleanup(folder: str):
     """
-    Adds a new folder to cleanup at exit.
+    Adds a new folder to clean up at exit.
     :param folder: The new folder.
     :type folder: str
     """
     _folders_to_cleanup.append(folder)
+
 
 def cleanup():
     """
@@ -135,5 +151,6 @@ def cleanup():
     """
     for folder in _folders_to_cleanup:
         shutil.rmtree(folder)
+
 
 atexit.register(cleanup)

@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from git.util import RemoteProgress
 from pythoneda import BaseObject
 
+
 class GitProgressLogging(RemoteProgress, BaseObject):
     """
     Shows the progress of long-running git operations.
@@ -34,7 +35,7 @@ class GitProgressLogging(RemoteProgress, BaseObject):
         - GitRepo: Uses me for certain git operations.
     """
 
-    def update(self, op_code, cur_count, max_count=None, message=""):
+    def update(self, opCode: str, curCount: int, maxCount: int = None, message: str = ""):
         """
         Gets notified regularly of the progress of an operation.
         :param opCode: The operation code.

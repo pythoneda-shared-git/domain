@@ -142,17 +142,17 @@ class GitTag(GitOperation):
         return result
 
     @classmethod
-    def latest_github_tag(cls, token: str, owner: str, repo: str, hash: str) -> str:
+    def latest_github_tag(cls, token: str, owner: str, repo: str, hashValue: str) -> str:
         """
-        Retrieves the highest github tag pointing to given hash.
-        :param token: The github token.
+        Retrieves the highest gitHub tag pointing to given hash.
+        :param token: The gitHub token.
         :type token: str
         :param owner: The repository owner.
         :type owner: str
         :param repo: The repository name.
         :type repo: str
-        :param hash: The commit hash.
-        :type hash: str
+        :param hashValue: The commit hash.
+        :type hashValue: str
         :return: The highest tag pointing to given commit, or None if none found.
         :rtype: Union(str,None)
         """
@@ -169,13 +169,13 @@ class GitTag(GitOperation):
 
         if (
             isinstance(tags, dict)
-            and tagstags.get("message", None) == "Bad credentials"
+            and tags.get("message", None) == "Bad credentials"
         ):
             GitTag.logger().error("Invalid credentials")
             raise InvalidGithubCredentials(url)
 
         # Filter tags pointing to the commit
-        commit_tags = [tag for tag in tags if tag["commit"]["sha"] == hash]
+        commit_tags = [tag for tag in tags if tag["commit"]["sha"] == hashValue]
 
         # Parse versions and sort them
         valid_versions = []

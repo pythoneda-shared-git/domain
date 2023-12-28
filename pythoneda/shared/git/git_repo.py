@@ -24,14 +24,10 @@ from pythoneda import attribute, Entity
 from pythoneda.shared.git import (
     ErrorCloningGitRepository,
     GitCheckoutFailed,
-    GitProgressLogging,
-    GitPush,
     GitTag,
-    SshPrivateKeyGitPolicy,
     Version,
 )
 import re
-import semver
 import subprocess
 from urllib.parse import urlparse
 from typing import Dict, List
@@ -209,13 +205,13 @@ class GitRepo(Entity):
             owner, repo_name = re.match(
                 r"(?:https?://)?(?:www\.)?.*\.com/([^/]+)/([^/]+)", url
             ).groups()
-        except:
+        except Exception as err:
             try:
                 owner, repo_name, _ = re.match(
                     r"github:([^/]+)?/([^/]+)?/(.*)?", url
                 ).groups()
-            except Exception as err:
-                GitRepo.logger().error(f"Invalid repo: {url}, {err}")
+            except Exception as anotherErr:
+                GitRepo.logger().error(f"Invalid repo: {url}, {err}, {anotherErr}")
 
         return owner, repo_name
 
@@ -245,10 +241,10 @@ class GitRepo(Entity):
         Clones this repo in given folder.
         :param sshUsername: The SSH username.
         :type sshUsername: str
-        :param privateKey: The private key for SSH authentication.
-        :type privateKey: str
-        :param passphrase: The passphrase of the private key.
-        :type passphrase: str
+        :param privateKeyFile: The private key for SSH authentication.
+        :type privateKeyFile: str
+        :param privateKeyPassphrase: The passphrase of the private key.
+        :type privateKeyPassphrase: str
         :return: A git.Repo instance.
         :rtype: git.Repo
         """
@@ -324,7 +320,7 @@ class GitRepo(Entity):
 
     def in_github(self) -> bool:
         """
-        Checks if the repository is hosted in github.com
+        Checks if the repository is hosted in gitHub.com
         :return: True in such case.
         :rtype: bool
         """

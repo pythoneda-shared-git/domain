@@ -53,7 +53,6 @@ class GitAdd(GitOperation):
         :rtype: str
         """
         result = None
-
         (code, stdout, stderr) = self.run(["git", "add", file])
         GitAdd.logger().info(f"git add {file} -> {code}")
         if code == 0:
@@ -74,7 +73,6 @@ class GitAdd(GitOperation):
         :rtype: str
         """
         result = None
-
         (code, stdout, stderr) = self.run(["git", "add", "--all"])
         if code == 0:
             result = stdout

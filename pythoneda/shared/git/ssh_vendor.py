@@ -23,6 +23,7 @@ from paramiko.agent import AgentRequestHandler, AgentServerProxy
 from paramiko.client import SSHClient
 from pythoneda import attribute, sensitive
 
+
 class SshVendor(object):
     """
     Represents a dulwich vendor to access Git repositories via SSH.
@@ -88,6 +89,8 @@ class SshVendor(object):
         Runs a command using SSH.
         :param hostPath: The host path.
         :type hostPath: str
+        :param command: The command to run.
+        :type command: str
         :param username: The username.
         :type username: str
         :param password: The password.

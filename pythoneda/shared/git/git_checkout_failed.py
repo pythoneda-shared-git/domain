@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from pythoneda import BaseObject
 
+
 class GitCheckoutFailed(Exception, BaseObject):
     """
     Running git checkout [rev] failed.
@@ -43,4 +44,4 @@ class GitCheckoutFailed(Exception, BaseObject):
         :param folder: The folder with the cloned repository.
         :type folder: str
         """
-        super().__init__(f'"git checkout {rev}" in folder {folder} failed')
+        super().__init__(f'"git checkout {rev}" from {url} in folder {folder} failed')
