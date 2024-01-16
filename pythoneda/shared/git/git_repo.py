@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/git/git_repo.py
 
@@ -20,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from git import Git, Repo
 import os
-from pythoneda import attribute, Entity
+from pythoneda.shared import attribute, Entity
 from pythoneda.shared.git import (
     ErrorCloningGitRepository,
     GitCheckoutFailed,

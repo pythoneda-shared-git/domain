@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/git/invalid_github_credentials.py
 
@@ -18,7 +19,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from pythoneda import BaseObject
+from pythoneda.shared import BaseObject
 
 
 class InvalidGithubCredentials(Exception, BaseObject):

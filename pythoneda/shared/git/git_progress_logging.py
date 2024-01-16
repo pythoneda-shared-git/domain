@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/git/git_progress_logging.py
 
@@ -19,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from git.util import RemoteProgress
-from pythoneda import BaseObject
+from pythoneda.shared import BaseObject
 
 
 class GitProgressLogging(RemoteProgress, BaseObject):
@@ -35,7 +36,9 @@ class GitProgressLogging(RemoteProgress, BaseObject):
         - GitRepo: Uses me for certain git operations.
     """
 
-    def update(self, opCode: str, curCount: int, maxCount: int = None, message: str = ""):
+    def update(
+        self, opCode: str, curCount: int, maxCount: int = None, message: str = ""
+    ):
         """
         Gets notified regularly of the progress of an operation.
         :param opCode: The operation code.

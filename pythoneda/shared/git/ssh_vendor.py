@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/git/ssh_git_repo.py
 
@@ -21,10 +22,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from paramiko import RSAKey, AutoAddPolicy
 from paramiko.agent import AgentRequestHandler, AgentServerProxy
 from paramiko.client import SSHClient
-from pythoneda import attribute, sensitive
+from pythoneda.shared import attribute, BaseObject, sensitive
 
 
-class SshVendor(object):
+class SshVendor(BaseObject):
     """
     Represents a dulwich vendor to access Git repositories via SSH.
 
@@ -36,7 +37,10 @@ class SshVendor(object):
     Collaborators:
         - dulwich.porcelain: Acts as a client in need of SSH communications.
     """
-    def __init__(self, sshUsername: str, privateKeyFile: str, privateKeyPassphrase: str):
+
+    def __init__(
+        self, sshUsername: str, privateKeyFile: str, privateKeyPassphrase: str
+    ):
         """
         Creates a new SshVendor instance.
         :param sshUsername: The SSH username.
@@ -49,7 +53,7 @@ class SshVendor(object):
         self._ssh_username = sshUsername
         self._private_key_file = privateKeyFile
         self._private_key_passphrase = privateKeyPassphrase
-        self._ssh_kwargs = {'username': sshUsername}
+        self._ssh_kwargs = {"username": sshUsername}
 
     @property
     @attribute
@@ -84,7 +88,9 @@ class SshVendor(object):
         """
         return self._private_key_passphrase
 
-    def run_command(self, hostPath: str, command: str, username:str=None, password:str=None):
+    def run_command(
+        self, hostPath: str, command: str, username: str = None, password: str = None
+    ):
         """
         Runs a command using SSH.
         :param hostPath: The host path.
@@ -100,8 +106,10 @@ class SshVendor(object):
         """
         client = SSHClient()
         client.set_missing_host_key_policy(AutoAddPolicy())
-        pkey = RSAKey.from_private_key_file(self._private_key_file, password=self._private_key_passphrase)
-        self.ssh_kwargs['pkey'] = pkey
+        pkey = RSAKey.from_private_key_file(
+            self._private_key_file, password=self._private_key_passphrase
+        )
+        self.ssh_kwargs["pkey"] = pkey
 
         # Connect to the host
         client.connect(host_path, **self.ssh_kwargs)
@@ -116,11 +124,11 @@ class SshVendor(object):
         chan.exec_command(command)
         return client, chan
 
-    def __call__(self, hostPath:str):
+    def __call__(self, hostPath: str):
         """
         Performs an operation.
         :param hostPath: The host path.
         :type hostPath: str
         """
-        client, chan = self.run_command(hostPath, 'git-upload-pack /' + hostPath)
+        client, chan = self.run_command(hostPath, "git-upload-pack /" + hostPath)
         return Protocol(lambda: chan.recv(65536), chan.sendall)

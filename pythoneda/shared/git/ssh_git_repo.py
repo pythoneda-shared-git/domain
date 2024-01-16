@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/git/ssh_git_repo.py
 
@@ -21,7 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import atexit
 from git import Repo
 import os
-from pythoneda import attribute, sensitive
+from pythoneda.shared import attribute, sensitive
 from pythoneda.shared.git import GitRepo
 import shutil
 import tempfile

@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/git/ssh_private_key_git_policy.py
 
@@ -19,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import paramiko
-from pythoneda import attribute, sensitive, ValueObject
+from pythoneda.shared import attribute, sensitive, ValueObject
 from typing import Dict
 
 
@@ -35,6 +36,7 @@ class SshPrivateKeyGitPolicy(ValueObject):
     Collaborators:
         - None
     """
+
     def __init__(self, username: str, privateKeyFile: str, passphrase: str):
         """
         Creates a new SshPrivateKeyGitPolicy instance.
@@ -91,7 +93,8 @@ class SshPrivateKeyGitPolicy(ValueObject):
 
         # Provide the path to the private key and its passphrase
         pkey = paramiko.RSAKey.from_private_key_file(
-            self.private_key, password=self.passphrase,
+            self.private_key,
+            password=self.passphrase,
         )
 
         client.connect(args[0], username=self.username, pkey=pkey)

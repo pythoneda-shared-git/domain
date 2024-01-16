@@ -1,3 +1,4 @@
+# vim: set fileencoding=utf-8
 """
 pythoneda/shared/git/git_operation.py
 
@@ -19,9 +20,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import abc
-import os
-from pythoneda import attribute, BaseObject
 from git import Repo
+import os
+from pythoneda.shared import attribute, BaseObject
 import subprocess
 from typing import List
 
