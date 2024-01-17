@@ -74,3 +74,11 @@ class GitCommit(GitOperation):
         latest_commit_message = latest_commit.message
 
         return latest_commit_hash, str(latest_commit_diff), latest_commit_message
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:

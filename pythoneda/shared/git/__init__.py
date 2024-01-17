@@ -54,3 +54,11 @@ from .git_repo import GitRepo
 from .ssh_git_repo import SshGitRepo
 from .git_commit_failed import GitCommitFailed
 from .git_commit import GitCommit
+# vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
+# Local Variables:
+# mode: python
+# python-indent-offset: 4
+# tab-width: 4
+# indent-tabs-mode: nil
+# fill-column: 79
+# End:
