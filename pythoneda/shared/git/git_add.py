@@ -55,7 +55,6 @@ class GitAdd(GitOperation):
         """
         result = None
         (code, stdout, stderr) = self.run(["git", "add", file])
-        GitAdd.logger().info(f"git add {file} -> {code}")
         if code == 0:
             result = stdout
         else:
@@ -85,6 +84,8 @@ class GitAdd(GitOperation):
             raise GitAddAllFailed(self.folder, stderr)
 
         return result
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

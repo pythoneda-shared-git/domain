@@ -19,8 +19,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from .git_check_attr_all_failed import GitCheckoutAllFailed
-from .git_check_attr_failed import GitCheckoutFailed
+from .git_checkout_failed import GitCheckoutFailed
 from .git_operation import GitOperation
 from typing import Dict
 
