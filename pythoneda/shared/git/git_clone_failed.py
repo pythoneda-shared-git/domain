@@ -1,8 +1,8 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/git/git_push_tags_failed.py
+pythoneda/shared/git/git_clone_failed.py
 
-This file defines the GitPushTagsFailed exception class.
+This file defines the GitCloneFailed exception class.
 
 Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
 
@@ -22,14 +22,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from pythoneda.shared import BaseObject
 
 
-class GitPushTagsFailed(Exception, BaseObject):
+class GitCloneFailed(Exception, BaseObject):
     """
-    Running git push --tags failed.
+    Running git clone failed.
 
-    Class name: GitPushTagsFailed
+    Class name: GitCloneFailed
 
     Responsibilities:
-        - Represent the error when running git push --tags.
+        - Represent the error when running git clone.
 
     Collaborators:
         - None
@@ -37,13 +37,13 @@ class GitPushTagsFailed(Exception, BaseObject):
 
     def __init__(self, folder: str, message: str):
         """
-        Creates a new GitPushTags instance.
+        Creates a new instance.
         :param folder: The folder with the cloned repository.
         :type folder: str
-        :param message: The error message.
+        :param message: The message.
         :type message: str
         """
-        super().__init__(f'"git push --tags" in folder {folder} failed: {message}')
+        super().__init__(f'"git clone" in folder {folder} failed: {message}')
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

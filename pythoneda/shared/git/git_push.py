@@ -46,21 +46,6 @@ class GitPush(GitOperation):
         """
         super().__init__(folder)
 
-    def push_branch(self, branch: str) -> bool:
-        """
-        Pushes changes in a given branch to a remote repository.
-        :param branch: The branch.
-        :type branch: str
-        :return: True if the operation succeeds.
-        :rtype: bool
-        """
-        (code, stdout, stderr) = self.run(["git", "push", branch])
-        if code != 0:
-            GitPush.logger().error(stderr)
-            raise GitPushBranchFailed(self.folder, branch)
-
-        return True
-
     def push(self) -> bool:
         """
         Pushes changes in all branches to a remote repository.
@@ -70,22 +55,38 @@ class GitPush(GitOperation):
         (code, stdout, stderr) = self.run(["git", "push"])
         if code != 0:
             GitPush.logger().error(stderr)
-            raise GitPushFailed(self.folder)
+            raise GitPushFailed(self.folder, stderr)
 
         return True
 
-    def push_tags(self) -> bool:
+    def push_branch(self, branch: str = "main", remote: str = None):
+        """
+        Pushes changes in a given branch to a remote repository.
+        :param branch: The name of the branch.
+        :type branch: str
+        :param remote: The name of the remote.
+        :type remote: str
+        """
+        args = ["git", "push"]
+        if remote:
+            args.append("-u")
+            args.append(remote)
+        args.append(branch)
+        (code, stdout, stderr) = self.run(args)
+        if code != 0:
+            GitPush.logger().error(stderr)
+            raise GitPushBranchFailed(self.folder, branch, remote, stderr)
+
+    def push_tags(self):
         """
         Pushes changes to a remote repository.
-        :return: True if the operation succeeds.
-        :rtype: bool
         """
         (code, stdout, stderr) = self.run(["git", "push", "--tags"])
         if code != 0:
             GitPush.logger().error(stderr)
-            raise GitPushTagsFailed(self.folder)
+            raise GitPushTagsFailed(self.folder, stderr)
 
-        return True
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

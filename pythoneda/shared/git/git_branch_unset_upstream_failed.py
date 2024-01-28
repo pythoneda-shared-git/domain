@@ -1,10 +1,10 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/git/git_push_tags_failed.py
+pythoneda/shared/git/git_branch_unset_upstream_failed.py
 
-This file defines the GitPushTagsFailed exception class.
+This file defines the GitBranchUnsetUpstreamFailed exception class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
+Copyright (C) 2024-today rydnr's pythoneda-shared-git/shared
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from pythoneda.shared import BaseObject
 
 
-class GitPushTagsFailed(Exception, BaseObject):
+class GitBranchUnsetUpstreamFailed(Exception, BaseObject):
     """
-    Running git push --tags failed.
+    Running git branch --unset-upstream failed.
 
-    Class name: GitPushTagsFailed
+    Class name: GitBranchUnsetUpstreamFailed
 
     Responsibilities:
-        - Represent the error when running git push --tags.
+        - Represent the error when running git branch --unset-upstream.
 
     Collaborators:
         - None
@@ -37,13 +37,15 @@ class GitPushTagsFailed(Exception, BaseObject):
 
     def __init__(self, folder: str, message: str):
         """
-        Creates a new GitPushTags instance.
+        Creates a new instance.
         :param folder: The folder with the cloned repository.
         :type folder: str
-        :param message: The error message.
+        :param message: The message.
         :type message: str
         """
-        super().__init__(f'"git push --tags" in folder {folder} failed: {message}')
+        super().__init__(
+            f'"git branch --unset-upstream" in folder {folder} failed: {message}'
+        )
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

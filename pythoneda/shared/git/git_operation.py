@@ -40,15 +40,18 @@ class GitOperation(BaseObject, abc.ABC):
         - None
     """
 
-    def __init__(self, folder: str):
+    def __init__(self, folder: str, isGitRepo: bool = True):
         """
         Creates a new GitOperation instance for given folder.
         :param folder: The cloned repository.
         :type folder: str
+        :param isGitRepo: Whether the given folder is a git repository or not.
+        :type isGitRepo: bool
         """
         super().__init__()
         self._folder = folder
-        self._repo = Repo(self.folder)
+        if isGitRepo:
+            self._repo = Repo(self.folder)
 
     @property
     @attribute
@@ -102,6 +105,8 @@ class GitOperation(BaseObject, abc.ABC):
             completed_process.stdout,
             completed_process.stderr,
         )
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

@@ -35,17 +35,19 @@ class GitCheckoutFailed(Exception, BaseObject):
         - None
     """
 
-    def __init__(self, url: str, rev: str, folder: str):
+    def __init__(self, folder: str, rev: str, file: str):
         """
         Creates a new instance.
-        :param url: The url of the repository.
-        :type url: str
-        :param rev: The revision.
-        :type rev: str
         :param folder: The folder with the cloned repository.
         :type folder: str
+        :param rev: The revision.
+        :type rev: str
+        :param file: The file to check out. Optional
+        :type file: str
         """
-        super().__init__(f'"git checkout {rev}" from {url} in folder {folder} failed')
+        super().__init__(f'"git checkout {rev}" in folder {folder} failed')
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

@@ -44,11 +44,13 @@ class GitCommit(GitOperation):
         """
         super().__init__(folder)
 
-    def commit(self, message: str) -> str:
+    def commit(self, message: str, retrieveLatestCommit: bool = True):
         """
         Commits staged changes.
         :param message: The message.
         :type message: str
+        :param retrieveLatestCommit: Whether to return the latest commit or not.
+        :type retrieveLatestCommit: bool
         :return: A tuple containing the hash, the diff and the message of the latest commit.
         :rtype: tuple(str, str, str)
         """
@@ -60,7 +62,8 @@ class GitCommit(GitOperation):
                 GitCommit.logger().error(stdout)
             raise GitCommitFailed(self.folder, stderr)
 
-        return self.latest_commit()
+        if retrieveLatestCommit:
+            return self.latest_commit()
 
     def latest_commit(self):
         """
@@ -74,6 +77,8 @@ class GitCommit(GitOperation):
         latest_commit_message = latest_commit.message
 
         return latest_commit_hash, str(latest_commit_diff), latest_commit_message
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

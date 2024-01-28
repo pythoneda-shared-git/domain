@@ -23,8 +23,6 @@ from git import Git, Repo
 import os
 from pythoneda.shared import attribute, Entity
 from pythoneda.shared.git import (
-    ErrorCloningGitRepository,
-    GitCheckoutFailed,
     GitTag,
     Version,
 )
@@ -251,50 +249,6 @@ class GitRepo(Entity):
         """
         raise NotImplementedError()
 
-    def raw_clone(self, folder: str, subfolder: str = None) -> Repo:
-        """
-        Clones this repo in given folder.
-        :param folder: The base folder of the cloned repository.
-        :type folder: str
-        :param subfolder: An optional subfolder.
-        :type subfolder: str
-        :return: The final folder of the cloned repository.
-        :rtype: str
-        """
-        result = folder
-
-        if subfolder:
-            result = os.path.join(folder, subfolder)
-
-        try:
-            subprocess.run(
-                ["git", "clone", self.url, subfolder],
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                cwd=folder,
-            )
-        except subprocess.CalledProcessError as err:
-            GitRepo.logger().error(err.stdout)
-            GitRepo.logger().error(err.stderr)
-            raise ErrorCloningGitRepository(self.url, folder)
-        try:
-            subprocess.run(
-                ["git", "checkout", self.rev],
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                cwd=result,
-            )
-        except subprocess.CalledProcessError as err:
-            GitRepo.logger().error(err.stdout)
-            GitRepo.logger().error(err.stderr)
-            raise GitCheckoutFailed(self.url, self.rev, folder)
-
-        return Repo(result)
-
     @classmethod
     def extract_url_and_subfolder(cls, url: str) -> tuple:
         """
@@ -448,6 +402,8 @@ class GitRepo(Entity):
         """
         repo = Repo(clonedFolder)
         return repo.active_branch.name
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

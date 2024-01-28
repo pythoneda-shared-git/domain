@@ -1,10 +1,10 @@
 # vim: set fileencoding=utf-8
 """
-pythoneda/shared/git/git_push_tags_failed.py
+pythoneda/shared/git/git_branch_failed.py
 
-This file defines the GitPushTagsFailed exception class.
+This file defines the GitBranchFailed exception class.
 
-Copyright (C) 2023-today rydnr's pythoneda-shared-git/shared
+Copyright (C) 2024-today rydnr's pythoneda-shared-git/shared
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,28 +22,30 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from pythoneda.shared import BaseObject
 
 
-class GitPushTagsFailed(Exception, BaseObject):
+class GitBranchFailed(Exception, BaseObject):
     """
-    Running git push --tags failed.
+    Running git branch failed.
 
-    Class name: GitPushTagsFailed
+    Class name: GitBranchFailed
 
     Responsibilities:
-        - Represent the error when running git push --tags.
+        - Represent the error when running git branch.
 
     Collaborators:
         - None
     """
 
-    def __init__(self, folder: str, message: str):
+    def __init__(self, folder: str, branch: str, message: str):
         """
-        Creates a new GitPushTags instance.
+        Creates a new instance.
         :param folder: The folder with the cloned repository.
         :type folder: str
-        :param message: The error message.
+        :param branch: The branch name.
+        :type branch: str
+        :param message: The message.
         :type message: str
         """
-        super().__init__(f'"git push --tags" in folder {folder} failed: {message}')
+        super().__init__(f'"git branch {branch}" in folder {folder} failed: {message}')
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

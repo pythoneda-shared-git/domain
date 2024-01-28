@@ -25,22 +25,30 @@ from .error_cloning_git_repository import ErrorCloningGitRepository
 from .git_add_failed import GitAddFailed
 from .git_add_all_failed import GitAddAllFailed
 from .git_apply_failed import GitApplyFailed
+from .git_branch_failed import GitBranchFailed
+from .git_branch_unset_upstream_failed import GitBranchUnsetUpstreamFailed
 from .git_checkout_failed import GitCheckoutFailed
 from .git_check_attr_all_failed import GitCheckAttrAllFailed
 from .git_check_attr_failed import GitCheckAttrFailed
+from .git_clone_failed import GitCloneFailed
+from .git_commit_failed import GitCommitFailed
 from .git_diff_failed import GitDiffFailed
 from .git_init_failed import GitInitFailed
 from .git_push_branch_failed import GitPushBranchFailed
 from .git_push_failed import GitPushFailed
 from .git_push_tags_failed import GitPushTagsFailed
+from .git_remote_add_failed import GitRemoteAddFailed
 from .git_stash_pop_failed import GitStashPopFailed
 from .git_stash_push_failed import GitStashPushFailed
 from .git_tag_failed import GitTagFailed
 
 from .git_operation import GitOperation
+
 from .git_add import GitAdd
 from .git_apply import GitApply
+from .git_branch import GitBranch
 from .git_check_attr import GitCheckAttr
+from .git_clone import GitClone
 from .git_diff import GitDiff
 from .git_init import GitInit
 from .git_progress_logging import GitProgressLogging
@@ -51,9 +59,10 @@ from .ssh_private_key_git_policy import SshPrivateKeyGitPolicy
 from .ssh_vendor import SshVendor
 from .version import Version
 from .git_repo import GitRepo
+from .git_remote import GitRemote
 from .ssh_git_repo import SshGitRepo
-from .git_commit_failed import GitCommitFailed
 from .git_commit import GitCommit
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python
