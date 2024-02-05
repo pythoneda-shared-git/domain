@@ -44,7 +44,7 @@ class GitDiff(GitOperation):
         """
         super().__init__(folder)
 
-    def diff(self) -> str:
+    async def diff(self) -> str:
         """
         Retrieves the diff.
         :return: The diff if the operation succeeds.
@@ -52,7 +52,7 @@ class GitDiff(GitOperation):
         """
         result = None
 
-        (code, stdout, stderr) = self.run(["git", "diff"])
+        (code, stdout, stderr) = await self.run(["git", "diff"])
         if code == 0:
             result = stdout
         else:
@@ -61,7 +61,7 @@ class GitDiff(GitOperation):
 
         return result
 
-    def committed_diff(self) -> str:
+    async def committed_diff(self) -> str:
         """
         Retrieves the diff.
         :return: The diff if the operation succeeds.
@@ -69,7 +69,7 @@ class GitDiff(GitOperation):
         """
         result = None
 
-        (code, stdout, stderr) = self.run(["git", "diff", "HEAD^", "HEAD"])
+        (code, stdout, stderr) = await self.run(["git", "diff", "HEAD^", "HEAD"])
         if code == 0:
             result = stdout
         else:
@@ -77,6 +77,8 @@ class GitDiff(GitOperation):
             raise GitDiffFailed(self.folder)
 
         return result
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

@@ -44,7 +44,7 @@ class GitApply(GitOperation):
         """
         super().__init__(folder)
 
-    def apply(self, patchFile: str) -> str:
+    async def apply(self, patchFile: str) -> str:
         """
         Applies the changes.
         :param patchFile: The location of the patch file to apply.
@@ -53,7 +53,7 @@ class GitApply(GitOperation):
         :rtype: str
         """
         result = None
-        (code, stdout, stderr) = self.run(["git", "apply", patchFile])
+        (code, stdout, stderr) = await self.run(["git", "apply", patchFile])
         if code == 0:
             result = stdout
         else:
@@ -62,14 +62,14 @@ class GitApply(GitOperation):
 
         return result
 
-    def apply3way(self) -> str:
+    async def apply3way(self) -> str:
         """
         Retrieves the diff.
         :return: The diff if the operation succeeds.
         :rtype: str
         """
         result = None
-        (code, stdout, stderr) = self.run(["git", "apply", "--3way"])
+        (code, stdout, stderr) = await self.run(["git", "apply", "--3way"])
         if code == 0:
             result = stdout
         else:
@@ -77,6 +77,8 @@ class GitApply(GitOperation):
             raise GitApplyFailed(self.folder)
 
         return result
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

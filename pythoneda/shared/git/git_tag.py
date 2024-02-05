@@ -49,7 +49,7 @@ class GitTag(GitOperation):
         """
         super().__init__(folder)
 
-    def create_tag(self, tag: str, message: str = "no message") -> bool:
+    async def tag(self, tag: str, message: str = "no message") -> bool:
         """
         Creates a tag in a local repository.
         :param tag: The tag to create.
@@ -60,10 +60,10 @@ class GitTag(GitOperation):
         :rtype: bool
         :raise pythoneda.shared.git.GitTagFailed: If the tag fails.
         """
-        (code, stdout, stderr) = self.run(["git", "tag", "-m", message, tag])
+        (code, stdout, stderr) = await self.run(["git", "tag", "-m", message, tag])
         if code != 0:
             GitTag.logger().error(stderr)
-            raise GitTagFailed(tag, self.folder)
+            raise GitTagFailed(tag, self.folder, stderr)
 
         return True
 
@@ -143,7 +143,9 @@ class GitTag(GitOperation):
         return result
 
     @classmethod
-    def latest_github_tag(cls, token: str, owner: str, repo: str, hashValue: str) -> str:
+    def latest_github_tag(
+        cls, token: str, owner: str, repo: str, hashValue: str
+    ) -> str:
         """
         Retrieves the highest gitHub tag pointing to given hash.
         :param token: The gitHub token.
@@ -168,10 +170,7 @@ class GitTag(GitOperation):
         response = requests.get(url, headers=headers)
         tags = response.json()
 
-        if (
-            isinstance(tags, dict)
-            and tags.get("message", None) == "Bad credentials"
-        ):
+        if isinstance(tags, dict) and tags.get("message", None) == "Bad credentials":
             GitTag.logger().error("Invalid credentials")
             raise InvalidGithubCredentials(url)
 
@@ -196,6 +195,28 @@ class GitTag(GitOperation):
             result = valid_versions[-1]
 
         return result
+
+    @classmethod
+    async def tag_exists(cls, url: str, tag: str) -> bool:
+        """
+        Checks whether a tag exists in given repository.
+        :param url: The url of the repository.
+        :type url: str
+        :param tag: The tag to check.
+        :type tag: str
+        :return: True in such case.
+        :rtype: bool
+        """
+        result = False
+        (code, stdout, stderr) = await self.run(["git", "tag", "-m", message, tag])
+        if code == 0:
+            result = True
+        else:
+            GitTag.logger().error(stderr)
+            raise GitTagFailed(tag, self.folder, stderr)
+        return result
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

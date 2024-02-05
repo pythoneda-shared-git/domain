@@ -44,13 +44,13 @@ class GitInit(GitOperation):
         """
         super().__init__(folder)
 
-    def init(self):
+    async def init(self):
         """
         Runs git init.
         """
         result = None
 
-        (code, stdout, stderr) = self.run(["git", "init"])
+        (code, stdout, stderr) = await self.run(["git", "init"])
         if code == 0:
             result = stdout
         else:
@@ -58,6 +58,8 @@ class GitInit(GitOperation):
             raise GitInitFailed(self.folder, stderr)
 
         return result
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

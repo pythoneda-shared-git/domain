@@ -158,29 +158,6 @@ class GitRepo(Entity):
         except subprocess.CalledProcessError:
             return False
 
-    @classmethod
-    def tag_exists(cls, url: str, tag: str) -> bool:
-        """
-        Checks whether a tag exists in given repository.
-        :param url: The url of the repository.
-        :type url: str
-        :param tag: The tag to check.
-        :type tag: str
-        :return: True in such case.
-        :rtype: bool
-        """
-        result = False
-        try:
-            output = subprocess.run(
-                ["git", "ls-remote", "--tags", url, tag],
-                stdout=subprocess.PIPE,
-                text=True,
-            )
-            result = not (output.stdout is None) and (len(output.stdout) > 0)
-        except subprocess.CalledProcessError:
-            pass
-        return result
-
     def repo_owner_and_repo_name(self) -> tuple:
         """
         Retrieves the owner and repository name.

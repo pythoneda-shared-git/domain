@@ -45,7 +45,7 @@ class GitCheckout(GitOperation):
         """
         super().__init__(folder)
 
-    def checkout(self, rev: str, file: str = None):
+    async def checkout(self, rev: str, file: str = None):
         """
         Performs a checkout.
         :param rev: The revision.
@@ -59,7 +59,7 @@ class GitCheckout(GitOperation):
         if file:
             args.append(file)
 
-        (code, stdout, stderr) = self.run(args)
+        (code, stdout, stderr) = await self.run(args)
         if code != 0:
             if stderr != "":
                 GitCheckout.logger().error(stderr)

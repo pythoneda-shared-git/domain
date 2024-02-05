@@ -35,15 +35,19 @@ class GitTagFailed(Exception, BaseObject):
         - None
     """
 
-    def __init__(self, tag: str, folder: str):
+    def __init__(self, tag: str, folder: str, message: str):
         """
         Creates a new instance.
         :param tag: The tag.
         :type tag: str
         :param folder: The folder with the cloned repository.
         :type folder: str
+        :param message: The error message.
+        :type message: str
         """
-        super().__init__(f'"git tag {tag}" in folder {folder} failed')
+        super().__init__(f'"git tag {tag}" in folder {folder} failed: {message}')
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

@@ -64,7 +64,7 @@ class GitCheckAttr(GitOperation):
 
         return result
 
-    def check_attr_all(self, file: str) -> Dict[str, str]:
+    async def check_attr_all(self, file: str) -> Dict[str, str]:
         """
         Retrieves all attributes of given file.
         :param file: The file to inspect.
@@ -74,8 +74,7 @@ class GitCheckAttr(GitOperation):
         """
         result = None
 
-        (code, stdout, stderr) = self.run(["git", "check-attr", "-a", file])
-        GitCheckAttr.logger().debug(f"git check-attr -a {file} -> {code}")
+        (code, stdout, stderr) = await self.run(["git", "check-attr", "-a", file])
         if code == 0:
             result = self._extract_attributes(stdout)
         else:
@@ -87,7 +86,7 @@ class GitCheckAttr(GitOperation):
 
         return result
 
-    def check_attr(self, attr: str, file: str) -> str:
+    async def check_attr(self, attr: str, file: str) -> str:
         """
         Retrieves an attribute of given file.
         :param attr: The attribute name.
@@ -99,7 +98,7 @@ class GitCheckAttr(GitOperation):
         """
         result = None
 
-        (code, stdout, stderr) = self.run(["git", "check-attr", attr, file])
+        (code, stdout, stderr) = await self.run(["git", "check-attr", attr, file])
         if code == 0:
             result = self._extract_attributes(stdout).get(attr, None)
 
@@ -112,6 +111,8 @@ class GitCheckAttr(GitOperation):
         GitCheckAttr.logger().debug(f"git check-attr {attr} {file} -> {result}")
 
         return result
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

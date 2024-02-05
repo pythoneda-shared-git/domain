@@ -44,7 +44,7 @@ class GitRemote(GitOperation):
         """
         super().__init__(folder)
 
-    def add(self, url: str, remote: str = "origin"):
+    async def add(self, url: str, remote: str = "origin"):
         """
         Creates a new remote.
         :param url: The url of the remote.
@@ -52,7 +52,7 @@ class GitRemote(GitOperation):
         :param remote: The name of the remote.
         :type remote: str
         """
-        (code, stdout, stderr) = self.run(["git", "remote", "add", remote, url])
+        (code, stdout, stderr) = await self.run(["git", "remote", "add", remote, url])
         if code != 0:
             if stderr != "":
                 GitRemote.logger().error(stderr)

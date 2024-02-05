@@ -44,7 +44,7 @@ class GitCommit(GitOperation):
         """
         super().__init__(folder)
 
-    def commit(self, message: str, retrieveLatestCommit: bool = True):
+    async def commit(self, message: str, retrieveLatestCommit: bool = True):
         """
         Commits staged changes.
         :param message: The message.
@@ -54,7 +54,7 @@ class GitCommit(GitOperation):
         :return: A tuple containing the hash, the diff and the message of the latest commit.
         :rtype: tuple(str, str, str)
         """
-        (code, stdout, stderr) = self.run(["git", "commit", "-S", "-m", message])
+        (code, stdout, stderr) = await self.run(["git", "commit", "-S", "-m", message])
         if code != 0:
             if stderr != "":
                 GitCommit.logger().error(stderr)

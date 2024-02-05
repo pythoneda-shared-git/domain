@@ -45,13 +45,13 @@ class GitBranch(GitOperation):
         """
         super().__init__(folder)
 
-    def branch(self, branch: str):
+    async def branch(self, branch: str):
         """
         Creates a new branch.
         :param branch: The name of the branch.
         :type branch: str
         """
-        (code, stdout, stderr) = self.run(["git", "branch", "-M", branch])
+        (code, stdout, stderr) = await self.run(["git", "branch", "-M", branch])
         if code != 0:
             if stderr != "":
                 GitBranch.logger().error(stderr)
@@ -59,11 +59,11 @@ class GitBranch(GitOperation):
                 GitBranch.logger().error(stdout)
             raise GitBranchFailed(self.folder, branch, stderr)
 
-    def unset_upstream(self):
+    async def unset_upstream(self):
         """
         Unsets the upstream.
         """
-        (code, stdout, stderr) = self.run(["git", "branch", "--unset-upstream"])
+        (code, stdout, stderr) = await self.run(["git", "branch", "--unset-upstream"])
         if code != 0:
             if stderr != "":
                 GitBranch.logger().error(stderr)

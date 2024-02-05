@@ -46,7 +46,7 @@ class GitStash(GitOperation):
         """
         super().__init__(folder)
 
-    def push(self, message: str = None) -> str:
+    async def push(self, message: str = None) -> str:
         """
         Performs a git stash push.
         :param message: The message.
@@ -59,7 +59,7 @@ class GitStash(GitOperation):
         args = ["git", "stash", "push"]
         if message:
             args.extend(["-m", message])
-        (code, stdout, stderr) = self.run(args)
+        (code, stdout, stderr) = await self.run(args)
         if code == 0:
             # Parse the output to get the stash identifier
             match = re.search(
@@ -74,7 +74,7 @@ class GitStash(GitOperation):
 
         return result
 
-    def pop(self, stashId: str) -> str:
+    async def pop(self, stashId: str) -> str:
         """
         Performs a git stash pop for given id.
         :param stashId: The stash id.
@@ -84,7 +84,7 @@ class GitStash(GitOperation):
         """
         result = None
 
-        (code, stdout, stderr) = self.run(["git", "stash", "pop", stashId])
+        (code, stdout, stderr) = await self.run(["git", "stash", "pop", stashId])
         if code == 0:
             result = stdout
         else:
@@ -92,6 +92,8 @@ class GitStash(GitOperation):
             raise GitStashPopFailed(self.folder)
 
         return result
+
+
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
 # Local Variables:
 # mode: python

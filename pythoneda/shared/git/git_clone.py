@@ -44,7 +44,7 @@ class GitClone(GitOperation):
         """
         super().__init__(folder, False)
 
-    def clone(self, url: str, subfolder: str = None):
+    async def clone(self, url: str, subfolder: str = None):
         """
         Clones this repo.
         :param url: The repository url.
@@ -57,7 +57,7 @@ class GitClone(GitOperation):
         if subfolder:
             args.append(subfolder)
 
-        (code, stdout, stderr) = self.run(args)
+        (code, stdout, stderr) = await self.run(args)
         if code != 0:
             if stderr != "":
                 GitClone.logger().error(stderr)

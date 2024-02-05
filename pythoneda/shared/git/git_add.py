@@ -45,7 +45,7 @@ class GitAdd(GitOperation):
         """
         super().__init__(folder)
 
-    def add(self, file: str) -> str:
+    async def add(self, file: str) -> str:
         """
         Adds changes in given file to the staging area.
         :param file: The file to add.
@@ -54,7 +54,7 @@ class GitAdd(GitOperation):
         :rtype: str
         """
         result = None
-        (code, stdout, stderr) = self.run(["git", "add", file])
+        (code, stdout, stderr) = await self.run(["git", "add", file])
         if code == 0:
             result = stdout
         else:
@@ -66,14 +66,14 @@ class GitAdd(GitOperation):
 
         return result
 
-    def add_all(self) -> str:
+    async def add_all(self) -> str:
         """
         Adds all changes to the staging area.
         :return: The output of the operation, should it succeeds.
         :rtype: str
         """
         result = None
-        (code, stdout, stderr) = self.run(["git", "add", "--all"])
+        (code, stdout, stderr) = await self.run(["git", "add", "--all"])
         if code == 0:
             result = stdout
         else:

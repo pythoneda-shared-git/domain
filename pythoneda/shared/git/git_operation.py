@@ -23,6 +23,8 @@ import abc
 from git import Repo
 import os
 from pythoneda.shared import attribute, BaseObject
+from pythoneda.shared.shell import AsyncShell
+import shlex
 import subprocess
 from typing import List
 
@@ -72,7 +74,7 @@ class GitOperation(BaseObject, abc.ABC):
         """
         return self._repo
 
-    def run(self, args: List[str]):
+    async def run(self, args: List[str]):
         """
         Runs given operation.
         :param args: The command-line args.
@@ -90,21 +92,11 @@ class GitOperation(BaseObject, abc.ABC):
             **dict(os.environ),  # Include existing environment variables
         }
 
-        completed_process = subprocess.run(
-            args,
-            check=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            cwd=self.folder,
-            env=custom_env,
+        (execution, stdout, stderr) = await AsyncShell(args, self.folder).run(
+            True, custom_env
         )
 
-        return (
-            completed_process.returncode,
-            completed_process.stdout,
-            completed_process.stderr,
-        )
+        return (execution.returncode, stdout, stderr)
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et

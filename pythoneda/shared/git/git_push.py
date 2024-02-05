@@ -46,20 +46,20 @@ class GitPush(GitOperation):
         """
         super().__init__(folder)
 
-    def push(self) -> bool:
+    async def push(self) -> bool:
         """
         Pushes changes in all branches to a remote repository.
         :return: True if the operation succeeds.
         :rtype: bool
         """
-        (code, stdout, stderr) = self.run(["git", "push"])
+        (code, stdout, stderr) = await self.run(["git", "push"])
         if code != 0:
             GitPush.logger().error(stderr)
             raise GitPushFailed(self.folder, stderr)
 
         return True
 
-    def push_branch(self, branch: str = "main", remote: str = None):
+    async def push_branch(self, branch: str = "main", remote: str = None):
         """
         Pushes changes in a given branch to a remote repository.
         :param branch: The name of the branch.
@@ -72,16 +72,16 @@ class GitPush(GitOperation):
             args.append("-u")
             args.append(remote)
         args.append(branch)
-        (code, stdout, stderr) = self.run(args)
+        (code, stdout, stderr) = await self.run(args)
         if code != 0:
             GitPush.logger().error(stderr)
             raise GitPushBranchFailed(self.folder, branch, remote, stderr)
 
-    def push_tags(self):
+    async def push_tags(self):
         """
         Pushes changes to a remote repository.
         """
-        (code, stdout, stderr) = self.run(["git", "push", "--tags"])
+        (code, stdout, stderr) = await self.run(["git", "push", "--tags"])
         if code != 0:
             GitPush.logger().error(stderr)
             raise GitPushTagsFailed(self.folder, stderr)
