@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from .git_clone_failed import GitCloneFailed
 from .git_operation import GitOperation
+from typing import Tuple
 
 
 class GitClone(GitOperation):
@@ -44,13 +45,15 @@ class GitClone(GitOperation):
         """
         super().__init__(folder, False)
 
-    async def clone(self, url: str, subfolder: str = None):
+    async def clone(self, url: str, subfolder: str = None) -> Tuple[int, str, str]:
         """
         Clones this repo.
         :param url: The repository url.
         :type url: str
         :param subfolder: An optional subfolder.
         :type subfolder: str
+        :return: A tuple containing the return code, the stdout, and the stderr.
+        :rtype: Tuple(int, str, str)
         """
         args = ["git", "clone", url]
 
@@ -64,6 +67,7 @@ class GitClone(GitOperation):
             if stdout != "":
                 GitClone.logger().error(stdout)
             raise GitCloneFailed(self.folder, stderr)
+        return (code, stdout, stderr)
 
 
 # vim: syntax=python ts=4 sw=4 sts=4 tw=79 sr et
