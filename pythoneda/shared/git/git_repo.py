@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from git import Git, Repo
 import os
-from pythoneda.shared import attribute, Entity
+from pythoneda.shared import attribute, Entity, EventReference
 from pythoneda.shared.git import (
     GitTag,
     Version,
@@ -45,7 +45,14 @@ class GitRepo(Entity):
         - None
     """
 
-    def __init__(self, url: str, rev: str = "main", folder: str = None, repo=None):
+    def __init__(
+        self,
+        url: str,
+        rev: str = "main",
+        folder: str = None,
+        repo=None,
+        eventHistory: List[EventReference] = [],
+    ):
         """
         Creates a new Git repository instance.
         :param url: The url of the repository.
@@ -56,12 +63,14 @@ class GitRepo(Entity):
         :type folder: str
         :param repo: The underlying repository.
         :type repo: git.Repo
+        :param eventHistory: The event history.
+        :type eventHistory: List[pythoneda.shared.EventReference]
         """
-        super().__init__()
         self._url = url
         self._rev = rev
         self._folder = folder
         self._repo = repo
+        super().__init__(eventHistory=eventHistory)
 
     @property
     @attribute
